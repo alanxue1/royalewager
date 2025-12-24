@@ -1,11 +1,10 @@
 #!/usr/bin/env sh
 
-if gem list --no-installed --exact --silent foreman; then
-  echo "Installing foreman..."
-  gem install foreman
-fi
+# IMPORTANT:
+# Do not `gem install foreman` here. That will target the *current* Ruby (often system Ruby)
+# and fail with permission issues. Foreman is a bundler dependency in this repo.
 
 # Default to port 3000 if not specified
 export PORT="${PORT:-3000}"
 
-exec foreman start -f Procfile.dev --env /dev/null "$@"
+exec bundle exec foreman start -f Procfile.dev --env /dev/null "$@"

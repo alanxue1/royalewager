@@ -55,6 +55,9 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # bin/dev process manager (avoid trying to install to system Ruby gems)
+  gem "foreman"
 end
 
 group :test do
