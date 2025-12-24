@@ -1,0 +1,47 @@
+<div class="mx-auto max-w-2xl p-6">
+  <h1 class="text-2xl font-semibold">Create wager</h1>
+
+  <div class="mt-6 rounded border p-4">
+    <%= form_with model: @wager do |f| %>
+      <% if @wager.errors.any? %>
+        <div class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <div class="font-semibold">Fix these:</div>
+          <ul class="list-disc pl-5">
+            <% @wager.errors.full_messages.each do |m| %>
+              <li><%= m %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <%= f.label :tag_a, "Player tag A", class: "block text-sm font-medium" %>
+          <%= f.text_field :tag_a, placeholder: "#P0LYQ2", class: "mt-1 w-full rounded border px-3 py-2 font-mono" %>
+        </div>
+        <div>
+          <%= f.label :tag_b, "Player tag B", class: "block text-sm font-medium" %>
+          <%= f.text_field :tag_b, placeholder: "#2PP", class: "mt-1 w-full rounded border px-3 py-2 font-mono" %>
+        </div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <%= f.label :amount_lamports, "Wager amount (lamports)", class: "block text-sm font-medium" %>
+          <%= f.number_field :amount_lamports, min: 1, step: 1, class: "mt-1 w-full rounded border px-3 py-2" %>
+        </div>
+        <div>
+          <%= f.label :deadline_at, "Deadline", class: "block text-sm font-medium" %>
+          <%= f.datetime_field :deadline_at, class: "mt-1 w-full rounded border px-3 py-2" %>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-between">
+        <%= link_to "Back", wagers_path, class: "text-sm text-gray-700 underline" %>
+        <%= f.submit "Create", class: "rounded bg-black px-3 py-2 text-white" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+

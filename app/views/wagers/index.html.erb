@@ -1,0 +1,29 @@
+<div class="mx-auto max-w-3xl p-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold">Wagers</h1>
+    <%= link_to "New wager", new_wager_path, class: "rounded bg-black px-3 py-2 text-white" %>
+  </div>
+
+  <div class="mt-6 divide-y rounded border">
+    <% @wagers.each do |w| %>
+      <%= link_to wager_path(w), class: "block p-4 hover:bg-gray-50" do %>
+        <div class="flex items-center justify-between gap-4">
+          <div class="min-w-0">
+            <div class="font-mono text-sm text-gray-700"><%= w.tag_a %> vs <%= w.tag_b %></div>
+            <div class="mt-1 text-xs text-gray-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
+          </div>
+          <div class="shrink-0 text-right">
+            <div class="text-sm font-medium"><%= w.status %></div>
+            <div class="text-xs text-gray-500"><%= w.amount_lamports %> lamports</div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if @wagers.empty? %>
+      <div class="p-4 text-gray-600">No wagers yet.</div>
+    <% end %>
+  </div>
+</div>
+
+

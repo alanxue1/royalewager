@@ -1,0 +1,34 @@
+<div class="mx-auto max-w-3xl p-6">
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold">Wager #<%= @wager.id %></h1>
+      <div class="mt-1 font-mono text-sm text-gray-700"><%= @wager.tag_a %> vs <%= @wager.tag_b %></div>
+    </div>
+    <%= link_to "All wagers", wagers_path, class: "text-sm text-gray-700 underline" %>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="rounded border p-4">
+      <div class="text-xs uppercase text-gray-500">Status</div>
+      <div class="mt-1 text-lg font-semibold"><%= @wager.status %></div>
+      <div class="mt-2 text-sm text-gray-700">Amount: <span class="font-mono"><%= @wager.amount_lamports %></span> lamports</div>
+      <div class="mt-1 text-sm text-gray-700">Deadline: <span class="font-mono"><%= @wager.deadline_at&.utc&.iso8601 %></span></div>
+    </div>
+
+    <div class="rounded border p-4">
+      <div class="text-xs uppercase text-gray-500">Resolution</div>
+      <div class="mt-2 text-sm text-gray-700">Battle time: <span class="font-mono"><%= @wager.battle_time&.utc&.iso8601 || "-" %></span></div>
+      <div class="mt-1 text-sm text-gray-700">Winner tag: <span class="font-mono"><%= @wager.winner_tag || "-" %></span></div>
+      <div class="mt-1 text-sm text-gray-700">Fingerprint: <span class="font-mono break-all"><%= @wager.battle_fingerprint || "-" %></span></div>
+    </div>
+  </div>
+
+  <div class="mt-6 rounded border p-4">
+    <div class="text-xs uppercase text-gray-500">Next</div>
+    <div class="mt-2 text-sm text-gray-700">
+      Waiting on escrow/Privy wiring; for now this page is just the canonical wager status object.
+    </div>
+  </div>
+</div>
+
+
