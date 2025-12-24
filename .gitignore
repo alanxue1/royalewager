@@ -1,0 +1,29 @@
+
+.DS_Store
+
+# Keep placeholders
+!/log/.keep
+!/tmp/.keep
+
+# Secrets / local env
+.env
+.env.*
+/config/master.key
+
+# Ruby
+/.bundle
+/vendor/bundle
+/.gems
+
+# Node
+/log/*
+/node_modules
+/tmp/*
+
+# Rails databases (sqlite)
+/db/*.sqlite3*
+/storage/*.sqlite3*
+
+# Local dev artifacts
+/.home
+/system-root-certs.pem

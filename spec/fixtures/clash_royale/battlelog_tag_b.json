@@ -1,0 +1,25 @@
+[
+  {
+    "battleTime": "20251224T100000.000Z",
+    "type": "PvP",
+    "gameMode": { "id": 72000006, "name": "1v1" },
+    "team": [{ "tag": "#BBBBBB", "crowns": 1 }],
+    "opponent": [{ "tag": "#AAAAAA", "crowns": 2 }]
+  },
+  {
+    "battleTime": "20251224T091500.000Z",
+    "type": "PvP",
+    "gameMode": { "id": 72000006, "name": "1v1" },
+    "team": [{ "tag": "#BBBBBB", "crowns": 3 }],
+    "opponent": [{ "tag": "#DDDDDD", "crowns": 0 }]
+  },
+  {
+    "battleTime": "20251224T080000.000Z",
+    "type": "PvP",
+    "gameMode": { "id": 72000006, "name": "1v1" },
+    "team": [{ "tag": "#BBBBBB", "crowns": 2 }],
+    "opponent": [{ "tag": "#AAAAAA", "crowns": 1 }]
+  }
+]
+
+
