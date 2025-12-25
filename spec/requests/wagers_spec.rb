@@ -1,6 +1,15 @@
 require "rails_helper"
 
 RSpec.describe "Wagers", type: :request do
+  def login!
+    post "/privy_session", params: {
+      privy_user_id: "did:privy:spec-user",
+      primary_wallet_address: "So11111111111111111111111111111111111111112",
+      email: "spec@example.com"
+    }
+    expect(response).to have_http_status(:ok)
+  end
+
   describe "GET /wagers" do
     it "renders successfully" do
       get "/wagers"
@@ -17,6 +26,7 @@ RSpec.describe "Wagers", type: :request do
 
   describe "POST /wagers" do
     it "creates a wager and redirects to show" do
+      login!
       post "/wagers", params: {
         wager: {
           tag_a: "#AAAAAA",
@@ -35,6 +45,7 @@ RSpec.describe "Wagers", type: :request do
     end
 
     it "re-renders form with errors" do
+      login!
       post "/wagers", params: {
         wager: {
           tag_a: "",

@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   root "wagers#index"
 
-  resources :wagers, only: [:index, :new, :create, :show]
+  resources :wagers, only: [:index, :new, :create, :show] do
+    member do
+      post :join
+      post :creator_deposit
+      post :joiner_deposit
+    end
+  end
   resource :privy_session, only: [:create, :destroy]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

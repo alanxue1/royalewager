@@ -27,3 +27,6 @@
 # Local dev artifacts
 /.home
 /system-root-certs.pem
+
+# Cursor (local editor rules)
+.cursorrules

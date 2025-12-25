@@ -23,7 +23,13 @@
         <div class="font-semibold">
           <%= link_to "Royale Wager", root_path, class: "hover:underline" %>
         </div>
-        <div id="privy-root" data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"></div>
+        <div
+          id="privy-root"
+          data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+          data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
+          data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+          data-escrow-program-id="<%= ENV["ESCROW_PROGRAM_ID"].to_s %>"
+        ></div>
       </div>
     </header>
     <%= yield %>

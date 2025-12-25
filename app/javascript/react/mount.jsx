@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 import { PrivyProvider } from "@privy-io/react-auth"
 
 import { PrivyWidget } from "./privy_widget"
+import { WagerEscrowWidget } from "./wager_escrow_widget"
 
 function mountPrivy() {
   const el = document.getElementById("privy-root")
@@ -30,5 +31,16 @@ function mountPrivy() {
 
 document.addEventListener("turbo:load", mountPrivy)
 document.addEventListener("DOMContentLoaded", mountPrivy)
+
+function mountWagerEscrow() {
+  const el = document.getElementById("wager-escrow-root")
+  if (!el) return
+
+  const root = createRoot(el)
+  root.render(<WagerEscrowWidget el={el} />)
+}
+
+document.addEventListener("turbo:load", mountWagerEscrow)
+document.addEventListener("DOMContentLoaded", mountWagerEscrow)
 
 

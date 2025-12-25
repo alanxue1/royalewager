@@ -25,8 +25,19 @@
 
   <div class="mt-6 rounded border p-4">
     <div class="text-xs uppercase text-gray-500">Next</div>
-    <div class="mt-2 text-sm text-gray-700">
-      Waiting on escrow/Privy wiring; for now this page is just the canonical wager status object.
+    <div class="mt-2">
+      <div
+        id="wager-escrow-root"
+        data-wager-id="<%= @wager.id %>"
+        data-amount-lamports="<%= @wager.amount_lamports %>"
+        data-status="<%= @wager.status %>"
+        data-is-creator="<%= current_user.present? && current_user.id == @wager.creator_id %>"
+        data-is-joiner="<%= current_user.present? && current_user.id == @wager.joiner_id %>"
+        data-has-joiner="<%= @wager.joiner_id.present? %>"
+        data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
+        data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+        data-escrow-program-id="<%= ENV["ESCROW_PROGRAM_ID"].to_s %>"
+      ></div>
     </div>
   </div>
 </div>
