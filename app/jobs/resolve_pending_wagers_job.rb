@@ -10,6 +10,10 @@ class ResolvePendingWagersJob < ApplicationJob
       .limit(limit)
       .find_each do |wager|
         resolver.call(wager)
+
+        if wager.status_resolved? || wager.status_refunded? || wager.status_expired?
+          SettleWagerJob.perform_later(wager.id)
+        end
       rescue Oracle::ResolveWager::Error => e
         wager.update!(status: :failed) if wager.status_active?
         Rails.logger.warn("[ResolvePendingWagersJob] wager_id=#{wager.id} error=#{e.class} msg=#{e.message}")
