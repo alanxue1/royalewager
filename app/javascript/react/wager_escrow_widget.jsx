@@ -2,6 +2,14 @@ import React, { useMemo, useState } from "react"
 import { usePrivy, useSolanaWallets } from "@privy-io/react-auth"
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js"
 
+function showToast({ message, tone, href, hrefText }) {
+  window.dispatchEvent(
+    new CustomEvent("royale:toast", {
+      detail: { message, tone, href, hrefText },
+    }),
+  )
+}
+
 function csrfToken() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta?.getAttribute("content") || ""
@@ -95,6 +103,7 @@ export function WagerEscrowWidget({ el }) {
   }, [el])
 
   const solWallet = solWallets?.[0]
+  const solWalletAddress = solWallet?.address || solWallet?.publicKey || ""
 
   const vaultAddress = useMemo(() => {
     if (!data.escrowProgramId) return ""
@@ -111,7 +120,7 @@ export function WagerEscrowWidget({ el }) {
   const canJoinAndDeposit = data.status === "awaiting_joiner_deposit" && !data.isCreator
 
   const sendCreate = async () => {
-    if (!solWallet?.address) throw new Error("No Solana wallet")
+    if (!solWalletAddress) throw new Error("No Solana wallet")
     if (!data.escrowProgramId) throw new Error("Missing ESCROW_PROGRAM_ID")
     if (!data.oraclePubkey) throw new Error("Missing ORACLE_AUTHORITY_PUBKEY")
 
@@ -126,7 +135,7 @@ export function WagerEscrowWidget({ el }) {
     }
 
     const connection = new Connection(data.solanaRpcUrl, "confirmed")
-    const creatorPubkey = new PublicKey(solWallet.address)
+    const creatorPubkey = new PublicKey(solWalletAddress)
     const programId = new PublicKey(data.escrowProgramId)
     const wagerId = BigInt(data.wagerId)
 
@@ -163,6 +172,7 @@ export function WagerEscrowWidget({ el }) {
     tx.feePayer = creatorPubkey
     tx.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash
 
+    if (typeof solWallet?.sendTransaction !== "function") throw new Error("Solana wallet cannot send transactions")
     const sig = await solWallet.sendTransaction(tx, connection, { preflightCommitment: "confirmed" })
     setLastSig(sig)
 
@@ -172,11 +182,11 @@ export function WagerEscrowWidget({ el }) {
   }
 
   const sendJoin = async () => {
-    if (!solWallet?.address) throw new Error("No Solana wallet")
+    if (!solWalletAddress) throw new Error("No Solana wallet")
     if (!data.escrowProgramId) throw new Error("Missing ESCROW_PROGRAM_ID")
 
     const connection = new Connection(data.solanaRpcUrl, "confirmed")
-    const joinerPubkey = new PublicKey(solWallet.address)
+    const joinerPubkey = new PublicKey(solWalletAddress)
     const programId = new PublicKey(data.escrowProgramId)
     const wagerId = BigInt(data.wagerId)
 
@@ -207,6 +217,7 @@ export function WagerEscrowWidget({ el }) {
     tx.feePayer = joinerPubkey
     tx.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash
 
+    if (typeof solWallet?.sendTransaction !== "function") throw new Error("Solana wallet cannot send transactions")
     const sig = await solWallet.sendTransaction(tx, connection, { preflightCommitment: "confirmed" })
     setLastSig(sig)
 
@@ -221,7 +232,9 @@ export function WagerEscrowWidget({ el }) {
       setErr("")
       await sendCreate()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setErr(msg)
+      showToast({ tone: "error", message: msg })
     } finally {
       setBusy(false)
     }
@@ -233,7 +246,9 @@ export function WagerEscrowWidget({ el }) {
       setErr("")
       await sendJoin()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setErr(msg)
+      showToast({ tone: "error", message: msg })
     } finally {
       setBusy(false)
     }
@@ -289,7 +304,6 @@ export function WagerEscrowWidget({ el }) {
         </div>
       ) : null}
 
-      {err ? <div className="text-xs text-red-600">{err}</div> : null}
     </div>
   )
 }

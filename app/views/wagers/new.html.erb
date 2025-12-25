@@ -1,5 +1,13 @@
 <div class="mx-auto max-w-2xl p-6">
-  <h1 class="text-2xl font-semibold">Create wager</h1>
+  <div
+    data-privy-widget="1"
+    data-variant="logout_only"
+    data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+  ></div>
+
+  <div class="flex items-center justify-between gap-4">
+    <h1 class="text-2xl font-semibold">Create wager</h1>
+  </div>
 
   <div class="mt-6 rounded border p-4">
     <%= form_with model: @wager do |f| %>
@@ -37,8 +45,8 @@
       </div>
 
       <div class="mt-6 flex items-center justify-between">
-        <%= link_to "Back", wagers_path, class: "text-sm text-gray-700 underline" %>
-        <%= f.submit "Create", class: "rounded bg-black px-3 py-2 text-white" %>
+        <%= link_to "Back", wagers_path, class: "inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100" %>
+        <%= f.submit "Create", class: "inline-flex cursor-pointer items-center rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950" %>
       </div>
     <% end %>
   </div>

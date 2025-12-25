@@ -12,6 +12,6 @@ class ApplicationController < ActionController::Base
   def require_user!
     return if current_user.present?
 
-    redirect_to new_wager_path, alert: "Login required"
+    redirect_to root_path, alert: "Login required"
   end
 end

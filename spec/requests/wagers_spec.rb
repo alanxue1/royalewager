@@ -2,8 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Wagers", type: :request do
   def login!
+    ENV["PRIVY_APP_ID"] = "cmjktgy1k00emjr0c9ngwe2xs"
+
     stub_request(:get, "https://auth.privy.io/api/v1/users/me")
-      .with(headers: { "Authorization" => "Bearer privy_test_token" })
+      .with(headers: { "Authorization" => "Bearer privy_test_token", "privy-app-id" => "cmjktgy1k00emjr0c9ngwe2xs" })
       .to_return(
         status: 200,
         headers: { "Content-Type" => "application/json" },
@@ -42,6 +44,7 @@ RSpec.describe "Wagers", type: :request do
 
   describe "GET /wagers" do
     it "renders successfully" do
+      login!
       get "/wagers"
       expect(response).to have_http_status(:ok)
     end
@@ -49,6 +52,7 @@ RSpec.describe "Wagers", type: :request do
 
   describe "GET /wagers/new" do
     it "renders successfully" do
+      login!
       get "/wagers/new"
       expect(response).to have_http_status(:ok)
     end
@@ -92,7 +96,8 @@ RSpec.describe "Wagers", type: :request do
 
   describe "GET /wagers/:id" do
     it "renders successfully" do
-      creator = User.create!
+      login!
+      creator = User.find(session[:user_id])
       wager = Wager.create!(
         creator: creator,
         tag_a: "#AAAAAA",

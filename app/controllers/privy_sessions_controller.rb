@@ -1,5 +1,9 @@
 class PrivySessionsController < ApplicationController
   def create
+    if current_user.present?
+      return render json: { ok: true, user_id: current_user.id }
+    end
+
     access_token = params[:access_token].to_s.strip
     requested_wallet = params[:primary_wallet_address].to_s.strip
 

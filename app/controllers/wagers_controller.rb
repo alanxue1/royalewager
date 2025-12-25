@@ -1,4 +1,6 @@
 class WagersController < ApplicationController
+  before_action :require_user!
+
   def index
     @wagers = Wager.order(created_at: :desc).limit(50)
   end

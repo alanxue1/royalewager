@@ -1,10 +1,25 @@
 <div class="mx-auto max-w-3xl p-6">
+  <div
+    data-privy-widget="1"
+    data-variant="logout_only"
+    data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+  ></div>
+
   <div class="flex items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-semibold">Wager #<%= @wager.id %></h1>
       <div class="mt-1 font-mono text-sm text-gray-700"><%= @wager.tag_a %> vs <%= @wager.tag_b %></div>
     </div>
-    <%= link_to "All wagers", wagers_path, class: "text-sm text-gray-700 underline" %>
+    <div class="flex items-center gap-4">
+      <div
+        data-privy-widget="1"
+        data-variant="fund_only"
+        data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+        data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
+        data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+      ></div>
+      <%= link_to "All wagers", wagers_path, class: "inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100" %>
+    </div>
   </div>
 
   <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -28,6 +43,7 @@
     <div class="mt-2">
       <div
         id="wager-escrow-root"
+        data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
         data-wager-id="<%= @wager.id %>"
         data-amount-lamports="<%= @wager.amount_lamports %>"
         data-deadline-unix-timestamp="<%= @wager.deadline_at.to_i %>"

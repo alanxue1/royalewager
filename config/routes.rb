@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root "wagers#index"
+  root "home#index"
 
   resources :wagers, only: [:index, :new, :create, :show] do
     member do

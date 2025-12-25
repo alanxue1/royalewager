@@ -1,28 +1,55 @@
-<div class="mx-auto max-w-3xl p-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold">Wagers</h1>
-    <%= link_to "New wager", new_wager_path, class: "rounded bg-black px-3 py-2 text-white" %>
-  </div>
+<div class="mx-auto max-w-6xl px-6 py-10">
+  <div
+    data-privy-widget="1"
+    data-variant="logout_only"
+    data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+  ></div>
 
-  <div class="mt-6 divide-y rounded border">
-    <% @wagers.each do |w| %>
-      <%= link_to wager_path(w), class: "block p-4 hover:bg-gray-50" do %>
-        <div class="flex items-center justify-between gap-4">
-          <div class="min-w-0">
-            <div class="font-mono text-sm text-gray-700"><%= w.tag_a %> vs <%= w.tag_b %></div>
-            <div class="mt-1 text-xs text-gray-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
-          </div>
-          <div class="shrink-0 text-right">
-            <div class="text-sm font-medium"><%= w.status %></div>
-            <div class="text-xs text-gray-500"><%= w.amount_lamports %> lamports</div>
-          </div>
+  <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
+    <div class="lg:col-span-7 lg:col-start-2">
+      <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
+          <h1 class="text-2xl font-semibold text-slate-900">Wagers</h1>
+          <%= link_to "New wager", new_wager_path, class: "inline-flex cursor-pointer items-center rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950" %>
         </div>
-      <% end %>
-    <% end %>
 
-    <% if @wagers.empty? %>
-      <div class="p-4 text-gray-600">No wagers yet.</div>
-    <% end %>
+        <div class="divide-y">
+          <% @wagers.each do |w| %>
+            <%= link_to wager_path(w), class: "block px-5 py-4 transition-colors hover:bg-slate-50" do %>
+              <div class="flex items-center justify-between gap-4">
+                <div class="min-w-0">
+                  <div class="font-mono text-sm text-slate-700"><%= w.tag_a %> vs <%= w.tag_b %></div>
+                  <div class="mt-1 text-xs text-slate-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
+                </div>
+                <div class="shrink-0 text-right">
+                  <div class="text-sm font-medium text-slate-900"><%= w.status %></div>
+                  <div class="text-xs text-slate-500"><%= w.amount_lamports %> lamports</div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+
+          <% if @wagers.empty? %>
+            <div class="px-5 py-4 text-slate-600">No wagers yet.</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-4 lg:col-start-9">
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Wallet</div>
+        <div class="mt-4">
+          <div
+            data-privy-widget="1"
+            data-variant="fund_only"
+            data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+            data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
+            data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+          ></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
