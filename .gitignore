@@ -30,3 +30,6 @@
 
 # Cursor (local editor rules)
 .cursorrules
+
+# Local oracle authority keypair (never commit)
+/solana/oracle-authority-keypair.json

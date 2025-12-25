@@ -86,7 +86,8 @@ class WagersController < ApplicationController
     end
 
     if wager.joiner_id.nil?
-      return render(json: { error: "joiner not set (join first)" }, status: :unprocessable_entity)
+      return render(json: { error: "creator cannot join" }, status: :unprocessable_entity) if wager.creator_id == user.id
+      wager.update!(joiner: user)
     end
 
     unless wager.joiner_id == user.id

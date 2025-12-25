@@ -30,6 +30,7 @@
         id="wager-escrow-root"
         data-wager-id="<%= @wager.id %>"
         data-amount-lamports="<%= @wager.amount_lamports %>"
+        data-deadline-unix-timestamp="<%= @wager.deadline_at.to_i %>"
         data-status="<%= @wager.status %>"
         data-is-creator="<%= current_user.present? && current_user.id == @wager.creator_id %>"
         data-is-joiner="<%= current_user.present? && current_user.id == @wager.joiner_id %>"
@@ -37,6 +38,7 @@
         data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
         data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
         data-escrow-program-id="<%= ENV["ESCROW_PROGRAM_ID"].to_s %>"
+        data-oracle-pubkey="<%= ENV["ORACLE_AUTHORITY_PUBKEY"].to_s %>"
       ></div>
     </div>
   </div>
