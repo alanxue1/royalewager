@@ -6,7 +6,7 @@ function csrfToken() {
   return meta?.getAttribute("content") || ""
 }
 
-async function upsertRailsSession({ privy_user_id, email, primary_wallet_address }) {
+async function upsertRailsSession({ access_token, privy_user_id, email, primary_wallet_address }) {
   const res = await fetch("/privy_session", {
     method: "POST",
     headers: {
@@ -14,7 +14,7 @@ async function upsertRailsSession({ privy_user_id, email, primary_wallet_address
       "X-CSRF-Token": csrfToken(),
       Accept: "application/json",
     },
-    body: JSON.stringify({ privy_user_id, email, primary_wallet_address }),
+    body: JSON.stringify({ access_token, privy_user_id, email, primary_wallet_address }),
     credentials: "same-origin",
   })
 
@@ -25,7 +25,7 @@ async function upsertRailsSession({ privy_user_id, email, primary_wallet_address
 }
 
 export function PrivyWidget() {
-  const { ready, authenticated, user, login, logout } = usePrivy()
+  const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy()
   const { wallets } = useWallets()
   const { fundWallet } = useFundWallet()
 
@@ -50,7 +50,11 @@ export function PrivyWidget() {
     ;(async () => {
       try {
         setLastSyncError("")
+        const access_token = await getAccessToken()
+        if (!access_token) throw new Error("Privy access token missing")
+
         await upsertRailsSession({
+          access_token,
           privy_user_id: user.id,
           email: user?.email?.address || "",
           primary_wallet_address: primaryAddress,

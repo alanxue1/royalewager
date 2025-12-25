@@ -2,10 +2,40 @@ require "rails_helper"
 
 RSpec.describe "Wagers", type: :request do
   def login!
+    stub_request(:get, "https://auth.privy.io/api/v1/users/me")
+      .with(headers: { "Authorization" => "Bearer privy_test_token" })
+      .to_return(
+        status: 200,
+        headers: { "Content-Type" => "application/json" },
+        body: {
+          user: {
+            id: "did:privy:spec-user",
+            linked_accounts: [
+              {
+                type: "wallet",
+                address: "So11111111111111111111111111111111111111112",
+                chain_type: "solana",
+                verified_at: 0,
+                first_verified_at: nil,
+                latest_verified_at: nil,
+                wallet_client: "unknown"
+              },
+              {
+                type: "email",
+                address: "spec@example.com",
+                verified_at: 0,
+                first_verified_at: nil,
+                latest_verified_at: nil
+              }
+            ]
+          },
+          identity_token: "test"
+        }.to_json
+      )
+
     post "/privy_session", params: {
-      privy_user_id: "did:privy:spec-user",
+      access_token: "privy_test_token",
       primary_wallet_address: "So11111111111111111111111111111111111111112",
-      email: "spec@example.com"
     }
     expect(response).to have_http_status(:ok)
   end
