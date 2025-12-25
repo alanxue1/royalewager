@@ -8,8 +8,8 @@ class WagersController < ApplicationController
   end
 
   def create
-    # Placeholder until Privy auth is wired; for now create a dummy creator.
-    creator = User.first_or_create!
+    creator = current_user
+    return redirect_to(new_wager_path, alert: "Login required") if creator.nil?
 
     @wager = Wager.new(wager_params)
     @wager.creator = creator

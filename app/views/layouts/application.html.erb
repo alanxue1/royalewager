@@ -18,6 +18,14 @@
   </head>
 
   <body>
+    <header class="border-b">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 p-4">
+        <div class="font-semibold">
+          <%= link_to "Royale Wager", root_path, class: "hover:underline" %>
+        </div>
+        <div id="privy-root" data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"></div>
+      </div>
+    </header>
     <%= yield %>
   </body>
 </html>

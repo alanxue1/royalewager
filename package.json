@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
+    "@privy-io/react-auth": "^2.21.0",
     "@tailwindcss/cli": "^4.1.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^4.1.18"
   }
 }
