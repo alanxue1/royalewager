@@ -7,4 +7,16 @@
 # Default to port 3000 if not specified
 export PORT="${PORT:-3000}"
 
-exec bundle exec foreman start -f Procfile.dev --env /dev/null "$@"
+# Load env vars from .env by default (or .env.local if present).
+# You can override this by setting FOREMAN_ENV, e.g. FOREMAN_ENV=.env.production
+if [ -n "${FOREMAN_ENV:-}" ]; then
+  ENV_FILE="$FOREMAN_ENV"
+elif [ -f ".env.local" ]; then
+  ENV_FILE=".env.local"
+elif [ -f ".env" ]; then
+  ENV_FILE=".env"
+else
+  ENV_FILE="/dev/null"
+fi
+
+exec bundle exec foreman start -f Procfile.dev --env "$ENV_FILE" "$@"

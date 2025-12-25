@@ -20,6 +20,6 @@ bin/rails db:prepare
 ## Clash Royale API smoke test
 
 ```bash
-bin/rails cr:smoke['#P0LYQ2']
+bin/rails "cr:smoke[#P0LYQ2]"
 ```
 
