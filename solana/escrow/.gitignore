@@ -1,0 +1,12 @@
+.anchor/
+.solana/
+node_modules/
+test-ledger/
+
+# Build artifacts
+target/
+!target/deploy/
+target/deploy/*
+!target/deploy/wager_escrow-keypair.json
+
+
