@@ -32,6 +32,8 @@ class PrivySessionsController < ApplicationController
         User.find_by(primary_wallet_address: requested_wallet) ||
         User.new
 
+    is_new_user = user.new_record?
+
     user.privy_user_id = privy_user_id
     user.primary_wallet_address = requested_wallet
     user.email = email if email.present?
@@ -40,7 +42,10 @@ class PrivySessionsController < ApplicationController
 
     session[:user_id] = user.id
 
-    render json: { ok: true, user_id: user.id }
+    # If new user doesn't have Clash Royale tag, frontend should redirect to onboarding
+    onboarding_required = is_new_user && user.clash_royale_tag.blank?
+
+    render json: { ok: true, user_id: user.id, onboarding_required: onboarding_required }
   rescue Privy::RefreshUser::Error => e
     render json: { error: e.message }, status: :unauthorized
   rescue KeyError

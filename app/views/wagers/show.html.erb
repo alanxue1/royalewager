@@ -11,18 +11,18 @@
         <div class="border-b border-slate-200 px-5 py-4">
           <h1 class="text-2xl font-semibold text-slate-900">Wager #<%= @wager.id %></h1>
           <div class="mt-1 font-mono text-sm text-slate-700"><%= @wager.tag_a %> vs <%= @wager.tag_b %></div>
-        </div>
+    </div>
 
         <div class="grid grid-cols-1 gap-4 px-5 py-4 sm:grid-cols-2">
           <div class="rounded-lg border border-slate-200 p-4">
             <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Status</div>
-            <div class="mt-2 text-lg font-semibold text-slate-900"><%= @wager.status %></div>
+            <div class="mt-2 text-lg font-semibold text-slate-900"><%= @wager.status_display %></div>
             <div class="mt-2 text-sm text-slate-700">
-              Amount: <span class="font-mono"><%= @wager.amount_lamports %></span> lamports
-            </div>
+              Amount: <span class="font-mono"><%= @wager.amount_sol %></span> sol
+    </div>
             <div class="mt-1 text-sm text-slate-700">
               Deadline: <span class="font-mono"><%= @wager.deadline_at&.utc&.iso8601 %></span>
-            </div>
+  </div>
 
             <% can_accept = current_user.present? && current_user.id != @wager.creator_id && @wager.joiner_id.nil? && !@wager.status_expired? && !@wager.status_refunded? && !@wager.status_settled? && !@wager.status_failed? && @wager.deadline_at > Time.current %>
             <% if can_accept %>
@@ -33,7 +33,7 @@
                   class: "inline-flex cursor-pointer items-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950" %>
               </div>
             <% end %>
-          </div>
+    </div>
 
           <div class="rounded-lg border border-slate-200 p-4">
             <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Resolution</div>
@@ -46,24 +46,24 @@
             <div class="mt-1 text-sm text-slate-700">
               Fingerprint: <span class="font-mono break-all"><%= @wager.battle_fingerprint || "-" %></span>
             </div>
-          </div>
-        </div>
+    </div>
+  </div>
 
         <div class="border-t border-slate-200 px-5 py-4">
           <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Escrow</div>
           <div class="mt-3">
-            <div
-              id="wager-escrow-root"
-              data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
-              data-wager-id="<%= @wager.id %>"
-              data-amount-lamports="<%= @wager.amount_lamports %>"
-              data-deadline-unix-timestamp="<%= @wager.deadline_at.to_i %>"
-              data-status="<%= @wager.status %>"
-              data-is-creator="<%= current_user.present? && current_user.id == @wager.creator_id %>"
-              data-is-joiner="<%= current_user.present? && current_user.id == @wager.joiner_id %>"
-              data-has-joiner="<%= @wager.joiner_id.present? %>"
-              data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
-              data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+      <div
+        id="wager-escrow-root"
+        data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+        data-wager-id="<%= @wager.id %>"
+        data-amount-lamports="<%= @wager.amount_lamports %>"
+        data-deadline-unix-timestamp="<%= @wager.deadline_at.to_i %>"
+        data-status="<%= @wager.status %>"
+        data-is-creator="<%= current_user.present? && current_user.id == @wager.creator_id %>"
+        data-is-joiner="<%= current_user.present? && current_user.id == @wager.joiner_id %>"
+        data-has-joiner="<%= @wager.joiner_id.present? %>"
+        data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
+        data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
               data-escrow-program-id="<%= Solana::Escrow::ProgramId.call %>"
               data-oracle-pubkey="<%= Solana::Escrow::OraclePubkey.call %>"
             ></div>
@@ -74,26 +74,62 @@
           <div class="border-t border-slate-200 px-5 py-4">
             <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Invite link</div>
 
+            <% invite_url = flash[:invite_url].presence || (@active_invite.present? ? wager_invite_url(@active_invite.token) : nil) %>
+            
             <% if flash[:invite_url].present? %>
               <div class="mt-2 text-sm text-slate-700">
                 <span class="font-semibold">New link:</span>
-                <span class="ml-2 font-mono break-all"><%= flash[:invite_url] %></span>
+                <span class="ml-2 font-mono break-all" id="invite-link-text"><%= flash[:invite_url] %></span>
               </div>
-            <% end %>
-
-            <% if @active_invite.present? %>
+            <% elsif @active_invite.present? %>
               <div class="mt-2 text-sm text-slate-700">
                 <span class="font-semibold">Current link:</span>
-                <span class="ml-2 font-mono break-all"><%= wager_invite_url(@active_invite.token) %></span>
+                <span class="ml-2 font-mono break-all" id="invite-link-text"><%= wager_invite_url(@active_invite.token) %></span>
               </div>
             <% end %>
 
-            <div class="mt-3">
+            <div class="mt-3 flex items-center gap-2">
               <%= button_to "Generate invite link",
                 invite_wager_path(@wager),
                 method: :post,
                 class: "inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100" %>
+              
+              <% if invite_url.present? %>
+                <button
+                  type="button"
+                  onclick="copyInviteLink()"
+                  class="inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100"
+                >
+                  Copy link
+                </button>
+              <% end %>
             </div>
+
+            <script>
+              function copyInviteLink() {
+                const linkText = document.getElementById('invite-link-text')?.textContent?.trim();
+                if (!linkText) return;
+                
+                navigator.clipboard.writeText(linkText).then(() => {
+                  window.dispatchEvent(new CustomEvent('royale:toast', {
+                    detail: { message: 'Invite link copied', tone: 'success' }
+                  }));
+                }).catch(() => {
+                  window.dispatchEvent(new CustomEvent('royale:toast', {
+                    detail: { message: 'Failed to copy link', tone: 'error' }
+                  }));
+                });
+              }
+
+              // Auto-copy when a new invite link is created
+              <% if flash[:invite_url].present? %>
+                document.addEventListener('DOMContentLoaded', () => {
+                  setTimeout(() => {
+                    copyInviteLink();
+                  }, 100);
+                });
+              <% end %>
+            </script>
           </div>
         <% end %>
       </div>
@@ -109,7 +145,7 @@
             data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
             data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
             data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
-          ></div>
+      ></div>
         </div>
       </div>
     </div>

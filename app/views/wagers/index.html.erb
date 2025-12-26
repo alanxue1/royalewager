@@ -22,30 +22,20 @@
                     <div class="font-mono text-sm text-slate-700">
                       <%= w.tag_a %> vs <%= w.tag_b.presence || "?" %>
                     </div>
-                    <div class="mt-1 text-xs text-slate-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
+                  <div class="mt-1 text-xs text-slate-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
                   <% end %>
                 </div>
 
                 <div class="shrink-0 text-right">
-                  <div class="text-sm font-medium text-slate-900"><%= w.status %></div>
-                  <div class="text-xs text-slate-500"><%= w.amount_lamports %> lamports</div>
+                  <div class="text-sm font-medium text-slate-900"><%= w.status_display %></div>
+                  <div class="text-xs text-slate-500"><%= w.amount_display %></div>
                 </div>
               </div>
-
-              <% can_accept = w.joiner_id.nil? && w.creator_id != current_user.id && !w.status_expired? && !w.status_refunded? && !w.status_settled? && !w.status_failed? && w.deadline_at > Time.current %>
-              <% if can_accept %>
-                <div class="mt-3">
-                  <%= button_to "Accept",
-                    accept_wager_path(w),
-                    method: :post,
-                    class: "inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100" %>
-                </div>
-              <% end %>
             </div>
           <% end %>
 
           <% if @wagers.empty? %>
-            <div class="px-5 py-4 text-slate-600">No wagers yet.</div>
+            <div class="px-5 py-4 text-slate-600">No wagers yet. Create your first wager to get started!</div>
           <% end %>
         </div>
       </div>

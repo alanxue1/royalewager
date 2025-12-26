@@ -30,6 +30,13 @@ namespace :cr do
   rescue ClashRoyale::Client::HttpError => e
     abort "http error: status=#{e.status} body=#{e.body.to_s[0, 500]}"
   end
+
+  desc "Resolve pending wagers (manual trigger)"
+  task resolve: :environment do
+    puts "Resolving pending wagers..."
+    ResolvePendingWagersJob.perform_now
+    puts "Done. Check wagers for status updates."
+  end
 end
 
 

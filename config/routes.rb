@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   end
   resources :wager_invites, only: [:show], param: :token
   resource :profile, only: [:show, :update]
+  resource :onboarding, only: [:show, :update]
   resource :privy_session, only: [:create, :destroy]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

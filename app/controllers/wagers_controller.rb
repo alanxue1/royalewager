@@ -2,7 +2,11 @@ class WagersController < ApplicationController
   before_action :require_user!
 
   def index
-    @wagers = Wager.order(created_at: :desc).limit(50)
+    user_id = current_user.id
+
+    # Wagers where user is creator or joiner
+    @wagers = Wager.where("creator_id = ? OR joiner_id = ?", user_id, user_id)
+      .order(created_at: :desc)
   end
 
   def new
@@ -22,11 +26,12 @@ class WagersController < ApplicationController
       return redirect_to(profile_path, alert: "Set your Clash Royale tag first")
     end
 
-    amount_lamports = wager_params.fetch(:amount_lamports)
+    amount_sol = wager_params.fetch(:amount_sol)
     dur = duration_minutes_param
     deadline_at = dur.minutes.from_now
 
-    @wager = Wager.new(amount_lamports: amount_lamports, deadline_at: deadline_at)
+    @wager = Wager.new(deadline_at: deadline_at)
+    @wager.amount_sol = amount_sol
     @wager.creator = creator
     @wager.tag_a = creator.clash_royale_tag
     @wager.tag_b = nil
@@ -138,6 +143,26 @@ class WagersController < ApplicationController
   def joiner_deposit
     wager = Wager.find(params[:id])
     user = current_user
+    
+    # Log for debugging wallet mismatch
+    File.open(Rails.root.join(".cursor", "debug.log"), "a") do |f|
+      f.puts({
+        location: "wagers_controller.rb:joiner_deposit:entry",
+        message: "Joiner deposit called",
+        data: {
+          wager_id: wager.id,
+          current_user_id: user&.id,
+          wager_joiner_id: wager.joiner_id,
+          wager_creator_id: wager.creator_id,
+          user_wallet: user&.primary_wallet_address,
+          signature: params[:signature]&.first(20),
+        },
+        timestamp: Time.current.to_i * 1000,
+        sessionId: "debug-session",
+        hypothesisId: "F",
+      }.to_json)
+    end
+    
     return render(json: { error: "login required" }, status: :unauthorized) if user.nil?
 
     unless wager.status_awaiting_joiner_deposit?
@@ -171,7 +196,7 @@ class WagersController < ApplicationController
   private
 
   def wager_params
-    params.require(:wager).permit(:amount_lamports)
+    params.require(:wager).permit(:amount_sol)
   end
 
   def duration_minutes_param

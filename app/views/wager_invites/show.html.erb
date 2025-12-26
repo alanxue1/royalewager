@@ -7,13 +7,13 @@
         Creator: <span class="font-mono"><%= @wager.tag_a %></span>
       </div>
       <div>
-        Amount: <span class="font-mono"><%= @wager.amount_lamports %></span> lamports
+        Amount: <span class="font-mono"><%= @wager.amount_sol %></span> sol
       </div>
       <div>
         Deadline: <span class="font-mono"><%= @wager.deadline_at&.utc&.iso8601 %></span>
       </div>
       <div>
-        Status: <span class="font-mono"><%= @wager.status %></span>
+        Status: <span class="font-mono"><%= @wager.status_display %></span>
       </div>
     </div>
 

@@ -115,9 +115,16 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
       refreshBalance()
     }, 15_000)
 
+    // Listen for balance refresh requests (e.g., after transactions)
+    const handleBalanceRefresh = () => {
+      refreshBalance()
+    }
+    window.addEventListener("royale:refreshBalance", handleBalanceRefresh)
+
     return () => {
       cancelled = true
       window.clearInterval(t)
+      window.removeEventListener("royale:refreshBalance", handleBalanceRefresh)
     }
   }, [ready, authenticated, solanaAddress, solanaRpcUrl])
 
@@ -143,7 +150,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
         const access_token = await getAccessToken()
         if (!access_token) throw new Error("Privy access token missing")
 
-        await upsertRailsSession({
+        const result = await upsertRailsSession({
           access_token,
           privy_user_id: user.id,
           email: user?.email?.address || "",
@@ -153,7 +160,16 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
         setDidBindSession(true)
 
         if (window.location.pathname === "/") {
+          if (result.onboarding_required) {
+            const turbo = window.Turbo
+            if (turbo && typeof turbo.visit === "function") {
+              turbo.visit("/onboarding")
+              return
+            }
+            window.location.assign("/onboarding")
+          } else {
           goToWagers()
+          }
         }
       } catch (e) {
         if (cancelled) return
@@ -222,20 +238,14 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
   }
 
   const onBack = async () => {
-    // On the main wagers index page, treat back as "log out and return to landing".
+    // On the main wagers index page, log out.
     if (window.location.pathname === "/wagers") {
-      const ok = window.confirm("Go back to the home page and log out?")
-      if (!ok) return
       await onLogout()
       return
     }
 
-    // Everywhere else: go back to the previous page (with a safe fallback).
+    // Everywhere else: go to the main wagers page.
     const turbo = window.Turbo
-    if (window.history.length > 1) {
-      window.history.back()
-      return
-    }
     if (turbo && typeof turbo.visit === "function") {
       turbo.visit("/wagers")
       return

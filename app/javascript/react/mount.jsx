@@ -55,6 +55,9 @@ document.addEventListener("DOMContentLoaded", mountPrivy)
 
 function mountWagerEscrow() {
   const el = document.getElementById("wager-escrow-root")
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/15fe5027-9a0e-4021-a5d7-6a1186039492',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mount.jsx:mountWagerEscrow:entry',message:'Mounting escrow widget',data:{hasElement:!!el,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
+  // #endregion
   if (!el) return
 
   const { appId } = privyConfigFromDataset(el.dataset)
@@ -63,6 +66,9 @@ function mountWagerEscrow() {
     return
   }
 
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/15fe5027-9a0e-4021-a5d7-6a1186039492',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mount.jsx:mountWagerEscrow:rendering',message:'Rendering PrivyProvider for escrow',data:{appId},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
+  // #endregion
   rootFor(el).render(
     <PrivyProvider
       appId={appId}

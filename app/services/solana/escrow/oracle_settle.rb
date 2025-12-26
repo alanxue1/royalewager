@@ -78,6 +78,7 @@ module Solana
 
       def run_node!(script_name, args)
         raise Error, "ORACLE_AUTHORITY_KEYPAIR_JSON missing" if @oracle_keypair_json.to_s.strip.empty?
+        raise Error, "ESCROW_PROGRAM_ID missing" if @program_id.to_s.strip.empty?
 
         script_path = Rails.root.join("solana", "escrow", "scripts", script_name).to_s
         env = {
@@ -94,7 +95,11 @@ module Solana
           out, err, status = Open3.capture3(env, "node", script_path, *args)
         end
 
-        raise Error, "node #{script_name} failed: #{err.presence || out}" unless status.success?
+        unless status.success?
+          error_msg = err.presence || out
+          Rails.logger.error("[OracleSettle] #{script_name} failed: #{error_msg}")
+          raise Error, "node #{script_name} failed: #{error_msg}"
+        end
 
         sig = out.to_s.strip
         raise Error, "missing signature output" if sig.empty?

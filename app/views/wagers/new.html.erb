@@ -24,8 +24,8 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <%= f.label :amount_lamports, "Wager amount (lamports)", class: "block text-sm font-medium" %>
-          <%= f.number_field :amount_lamports, min: 1, step: 1, class: "mt-1 w-full rounded border px-3 py-2" %>
+          <%= f.label :amount_sol, "Wager amount (SOL)", class: "block text-sm font-medium" %>
+          <%= f.number_field :amount_sol, min: 0, step: "0.000001", placeholder: "0.01", class: "mt-1 w-full rounded border px-3 py-2" %>
         </div>
         <div>
           <label class="block text-sm font-medium" for="wager_duration_minutes">Deadline</label>

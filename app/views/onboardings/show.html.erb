@@ -1,0 +1,35 @@
+<div class="mx-auto max-w-xl px-6 py-10">
+  <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h1 class="text-2xl font-semibold text-slate-900">Welcome!</h1>
+
+    <p class="mt-2 text-sm text-slate-600">
+      To get started, please enter your Clash Royale player tag. This will be used when you create or accept wagers.
+    </p>
+
+    <%= form_with model: @user, url: onboarding_path, method: :patch, class: "mt-6 space-y-4" do |f| %>
+      <% if @user.errors.any? %>
+        <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <div class="font-semibold">Please fix these errors:</div>
+          <ul class="mt-1 list-disc pl-5">
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :clash_royale_tag, "Clash Royale tag", class: "block text-sm font-semibold text-slate-900" %>
+        <%= f.text_field :clash_royale_tag, placeholder: "#P0LYQ2", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-sm text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" %>
+        <div class="mt-1 text-xs text-slate-500">
+          Your tag must start with # and contain only uppercase letters and numbers.
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end">
+        <%= f.submit "Continue", class: "inline-flex cursor-pointer items-center rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
