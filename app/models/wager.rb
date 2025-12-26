@@ -1,4 +1,8 @@
 class Wager < ApplicationRecord
+  attr_accessor :duration_minutes
+
+  has_many :wager_invites, dependent: :destroy
+
   enum :status, {
     awaiting_creator_deposit: 0,
     awaiting_joiner_deposit: 1,
@@ -13,7 +17,8 @@ class Wager < ApplicationRecord
   belongs_to :creator, class_name: "User"
   belongs_to :joiner, class_name: "User", optional: true
 
-  validates :tag_a, :tag_b, presence: true
+  validates :tag_a, presence: true
+  validates :tag_b, presence: true, if: -> { joiner_id.present? }
   validates :amount_lamports, numericality: { only_integer: true, greater_than: 0 }
   validates :deadline_at, presence: true
 end

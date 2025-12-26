@@ -15,18 +15,33 @@
 
         <div class="divide-y">
           <% @wagers.each do |w| %>
-            <%= link_to wager_path(w), class: "block px-5 py-4 transition-colors hover:bg-slate-50" do %>
+            <div class="px-5 py-4">
               <div class="flex items-center justify-between gap-4">
                 <div class="min-w-0">
-                  <div class="font-mono text-sm text-slate-700"><%= w.tag_a %> vs <%= w.tag_b %></div>
-                  <div class="mt-1 text-xs text-slate-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
+                  <%= link_to wager_path(w), class: "block" do %>
+                    <div class="font-mono text-sm text-slate-700">
+                      <%= w.tag_a %> vs <%= w.tag_b.presence || "?" %>
+                    </div>
+                    <div class="mt-1 text-xs text-slate-500">created <%= time_ago_in_words(w.created_at) %> ago</div>
+                  <% end %>
                 </div>
+
                 <div class="shrink-0 text-right">
                   <div class="text-sm font-medium text-slate-900"><%= w.status %></div>
                   <div class="text-xs text-slate-500"><%= w.amount_lamports %> lamports</div>
                 </div>
               </div>
-            <% end %>
+
+              <% can_accept = w.joiner_id.nil? && w.creator_id != current_user.id && !w.status_expired? && !w.status_refunded? && !w.status_settled? && !w.status_failed? && w.deadline_at > Time.current %>
+              <% if can_accept %>
+                <div class="mt-3">
+                  <%= button_to "Accept",
+                    accept_wager_path(w),
+                    method: :post,
+                    class: "inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100" %>
+                </div>
+              <% end %>
+            </div>
           <% end %>
 
           <% if @wagers.empty? %>

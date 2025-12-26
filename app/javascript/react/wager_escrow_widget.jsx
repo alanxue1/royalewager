@@ -10,6 +10,19 @@ function showToast({ message, tone, href, hrefText }) {
   )
 }
 
+function firstValidSolanaPubkey(candidates) {
+  for (const c of candidates) {
+    const s = (c || "").toString().trim()
+    if (!s) continue
+    try {
+      return new PublicKey(s).toBase58()
+    } catch {
+      // ignore
+    }
+  }
+  return ""
+}
+
 function csrfToken() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta?.getAttribute("content") || ""
@@ -78,7 +91,7 @@ function concatBytes(...parts) {
 }
 
 export function WagerEscrowWidget({ el }) {
-  const { ready, authenticated } = usePrivy()
+  const { ready, authenticated, user } = usePrivy()
   const { ready: solReady, wallets: solWallets } = useSolanaWallets()
 
   const [busy, setBusy] = useState(false)
@@ -102,8 +115,33 @@ export function WagerEscrowWidget({ el }) {
     }
   }, [el])
 
-  const solWallet = solWallets?.[0]
-  const solWalletAddress = solWallet?.address || solWallet?.publicKey || ""
+  // Use the same "best address" strategy as the Privy wallet widget so
+  // funding/airdrops and transactions are targeting the same wallet.
+  const solanaAddress = useMemo(() => {
+    const fromSolWallets = (solWallets || []).flatMap((w) => [w?.publicKey, w?.address])
+    const fromUserWallet = user?.wallet?.address
+    const fromLinkedSol =
+      user?.linkedAccounts?.find((a) => a?.type === "wallet" && a?.chain_type === "solana")?.address
+
+    return firstValidSolanaPubkey([...fromSolWallets, fromLinkedSol, fromUserWallet])
+  }, [solWallets, user])
+
+  const solWallet = useMemo(() => {
+    const wallets = solWallets || []
+    if (!wallets.length) return null
+    if (solanaAddress) {
+      const byAddr = wallets.find((w) => {
+        const addr = (w?.address || w?.publicKey || "").toString().trim()
+        return addr && addr === solanaAddress
+      })
+      if (byAddr) return byAddr
+    }
+    // Prefer privy embedded wallet if present.
+    const privy = wallets.find((w) => w?.walletClientType === "privy")
+    return privy || wallets[0]
+  }, [solWallets, solanaAddress])
+
+  const solWalletAddress = solanaAddress || solWallet?.address || solWallet?.publicKey || ""
 
   const vaultAddress = useMemo(() => {
     if (!data.escrowProgramId) return ""
@@ -117,7 +155,7 @@ export function WagerEscrowWidget({ el }) {
   }, [data.escrowProgramId, data.wagerId])
 
   const canCreatorDeposit = data.status === "awaiting_creator_deposit" && data.isCreator
-  const canJoinAndDeposit = data.status === "awaiting_joiner_deposit" && !data.isCreator
+  const canJoinAndDeposit = data.status === "awaiting_joiner_deposit" && data.isJoiner
 
   const sendCreate = async () => {
     if (!solWalletAddress) throw new Error("No Solana wallet")
@@ -165,7 +203,8 @@ export function WagerEscrowWidget({ el }) {
         { pubkey: vaultPda, isSigner: false, isWritable: true },
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
-      data: Buffer.from(dataBytes),
+      // Browser-safe: TransactionInstruction accepts Uint8Array.
+      data: dataBytes,
     })
 
     const tx = new Transaction().add(ix)
@@ -210,7 +249,8 @@ export function WagerEscrowWidget({ el }) {
         { pubkey: vaultPda, isSigner: false, isWritable: true },
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
-      data: Buffer.from(dataBytes),
+      // Browser-safe: TransactionInstruction accepts Uint8Array.
+      data: dataBytes,
     })
 
     const tx = new Transaction().add(ix)

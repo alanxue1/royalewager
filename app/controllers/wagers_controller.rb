@@ -6,47 +6,104 @@ class WagersController < ApplicationController
   end
 
   def new
+    if current_user&.clash_royale_tag.to_s.strip.empty?
+      redirect_to profile_path, alert: "Set your Clash Royale tag first" and return
+    end
+
     @wager = Wager.new(deadline_at: 30.minutes.from_now)
+    @wager.duration_minutes = 30
   end
 
   def create
     creator = current_user
     return redirect_to(new_wager_path, alert: "Login required") if creator.nil?
 
-    @wager = Wager.new(wager_params)
+    if creator.clash_royale_tag.to_s.strip.empty?
+      return redirect_to(profile_path, alert: "Set your Clash Royale tag first")
+    end
+
+    amount_lamports = wager_params.fetch(:amount_lamports)
+    dur = duration_minutes_param
+    deadline_at = dur.minutes.from_now
+
+    @wager = Wager.new(amount_lamports: amount_lamports, deadline_at: deadline_at)
     @wager.creator = creator
+    @wager.tag_a = creator.clash_royale_tag
+    @wager.tag_b = nil
     @wager.status = :awaiting_creator_deposit
 
     if @wager.save
       redirect_to @wager
     else
+      @wager.duration_minutes = dur
       render :new, status: :unprocessable_entity
     end
   end
 
   def show
     @wager = Wager.find(params[:id])
+    @active_invite =
+      @wager.wager_invites.active.order(created_at: :desc).first
   end
 
-  def join
+  def accept
     wager = Wager.find(params[:id])
     user = current_user
-    return render(json: { error: "login required" }, status: :unauthorized) if user.nil?
+    return accept_error!("login required", status: :unauthorized) if user.nil?
 
-    unless wager.status_awaiting_joiner_deposit?
-      return render(json: { error: "wager not joinable" }, status: :unprocessable_entity)
-    end
-
-    if wager.joiner_id.present?
-      return render(json: { error: "wager already has joiner" }, status: :unprocessable_entity)
+    if user.clash_royale_tag.to_s.strip.empty?
+      return accept_error!("set your Clash Royale tag first", status: :unprocessable_entity)
     end
 
     if wager.creator_id == user.id
-      return render(json: { error: "creator cannot join" }, status: :unprocessable_entity)
+      return accept_error!("creator cannot accept", status: :unprocessable_entity)
     end
 
-    wager.update!(joiner: user)
-    render json: { ok: true }
+    if wager.joiner_id.present?
+      return accept_error!("wager already has joiner", status: :unprocessable_entity)
+    end
+
+    if wager.status_expired? || wager.status_refunded? || wager.status_settled? || wager.status_failed?
+      return accept_error!("wager is not joinable", status: :unprocessable_entity)
+    end
+
+    if wager.deadline_at.present? && wager.deadline_at <= Time.current
+      wager.update!(status: :expired) if wager.status_awaiting_creator_deposit? || wager.status_awaiting_joiner_deposit?
+      return accept_error!("wager expired", status: :unprocessable_entity)
+    end
+
+    token = params[:token].to_s.strip
+    if token.present?
+      invite = WagerInvite.find_by(token: token, wager_id: wager.id)
+      return accept_error!("invite link already used", status: :unprocessable_entity) if invite.nil? || invite.accepted_at.present? || invite.revoked_at.present?
+      invite.accept!(user)
+    end
+
+    wager.update!(joiner: user, tag_b: user.clash_royale_tag)
+    respond_to do |format|
+      format.json { render json: { ok: true } }
+      format.html { redirect_to wager_path(wager), notice: "Wager accepted" }
+    end
+  end
+
+  def invite
+    wager = Wager.find(params[:id])
+    user = current_user
+    return redirect_to(root_path, alert: "Login required") if user.nil?
+
+    unless wager.creator_id == user.id
+      return redirect_to wager_path(wager), alert: "Only creator can invite"
+    end
+
+    if wager.joiner_id.present?
+      return redirect_to wager_path(wager), alert: "Wager already has joiner"
+    end
+
+    # single-use: revoke any prior active invites
+    wager.wager_invites.active.find_each(&:revoke!)
+
+    invite = wager.wager_invites.create!(inviter: user)
+    redirect_to wager_path(wager), notice: "Invite link created", flash: { invite_url: wager_invite_url(invite.token) }
   end
 
   def creator_deposit
@@ -88,8 +145,7 @@ class WagersController < ApplicationController
     end
 
     if wager.joiner_id.nil?
-      return render(json: { error: "creator cannot join" }, status: :unprocessable_entity) if wager.creator_id == user.id
-      wager.update!(joiner: user)
+      return render(json: { error: "accept wager first" }, status: :unprocessable_entity)
     end
 
     unless wager.joiner_id == user.id
@@ -115,7 +171,21 @@ class WagersController < ApplicationController
   private
 
   def wager_params
-    params.require(:wager).permit(:tag_a, :tag_b, :amount_lamports, :deadline_at)
+    params.require(:wager).permit(:amount_lamports)
+  end
+
+  def duration_minutes_param
+    raw = params.dig(:wager, :duration_minutes).to_s
+    n = Integer(raw, exception: false)
+    allowed = [10, 20, 30, 60]
+    allowed.include?(n) ? n : 30
+  end
+
+  def accept_error!(message, status:)
+    respond_to do |format|
+      format.json { render json: { error: message }, status: status }
+      format.html { redirect_to wager_path(params[:id]), alert: message }
+    end
   end
 end
 

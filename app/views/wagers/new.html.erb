@@ -24,23 +24,17 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <%= f.label :tag_a, "Player tag A", class: "block text-sm font-medium" %>
-          <%= f.text_field :tag_a, placeholder: "#P0LYQ2", class: "mt-1 w-full rounded border px-3 py-2 font-mono" %>
-        </div>
-        <div>
-          <%= f.label :tag_b, "Player tag B", class: "block text-sm font-medium" %>
-          <%= f.text_field :tag_b, placeholder: "#2PP", class: "mt-1 w-full rounded border px-3 py-2 font-mono" %>
-        </div>
-      </div>
-
-      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
           <%= f.label :amount_lamports, "Wager amount (lamports)", class: "block text-sm font-medium" %>
           <%= f.number_field :amount_lamports, min: 1, step: 1, class: "mt-1 w-full rounded border px-3 py-2" %>
         </div>
         <div>
-          <%= f.label :deadline_at, "Deadline", class: "block text-sm font-medium" %>
-          <%= f.datetime_field :deadline_at, class: "mt-1 w-full rounded border px-3 py-2" %>
+          <label class="block text-sm font-medium" for="wager_duration_minutes">Deadline</label>
+          <%= select_tag(
+            "wager[duration_minutes]",
+            options_for_select([["10 min", 10], ["20 min", 20], ["30 min", 30], ["1 hr", 60]], @wager.duration_minutes.to_i),
+            id: "wager_duration_minutes",
+            class: "mt-1 w-full rounded border px-3 py-2"
+          ) %>
         </div>
       </div>
 
