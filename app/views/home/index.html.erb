@@ -1,35 +1,41 @@
-<main class="min-h-screen px-6">
-  <div class="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-12 text-center sm:gap-14">
-    <div class="flex flex-col items-center gap-5 sm:gap-6">
-      <div
-        class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium tracking-wide text-slate-600 shadow-sm"
-        data-controller="rotating-card"
-        data-rotating-card-phrases-value='["CHALLENGE FRIENDS","GET PAID INSTANTLY","JOIN THE WAITLIST"]'
-        data-rotating-card-interval-ms-value="2200"
-      >
-        <span
-          class="transition-opacity duration-200"
-          data-rotating-card-target="text"
-        >challenge friends</span>
+<main class="min-h-screen px-6 py-12">
+  <div class="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-12 text-center sm:gap-8">
+    <div class="flex flex-col items-center gap-5 sm:gap-6 relative w-full pb-32">
+      <span class="absolute inset-0 flex items-center justify-center pointer-events-none" style="background-image: url('<%= asset_path('flag.png') %>'); background-size: contain; background-position: center; background-repeat: no-repeat; opacity: 0.65; z-index: 0; width: 200%; height: 200%; top: -50%; left: -50%;"></span>
+      
+      <div class="relative z-10">
+        <div
+          class="inline-flex items-center rounded-xl border-2 border-royale-gold bg-gradient-to-r from-royale-gold to-royale-crown px-6 py-3 text-sm font-display font-bold tracking-wider text-white shadow-royale"
+          data-controller="rotating-card"
+          data-rotating-card-phrases-value='["CHALLENGE FRIENDS","GET PAID INSTANTLY","JOIN THE WAITLIST"]'
+          data-rotating-card-interval-ms-value="2200"
+        >
+          <span
+            class="transition-opacity duration-200"
+            data-rotating-card-target="text"
+          >CHALLENGE FRIENDS</span>
+        </div>
       </div>
 
-      <h1 class="text-6xl font-extrabold tracking-tight text-slate-900 sm:text-7xl sm:leading-[1.02]">
+      <h1 class="text-royale-title text-6xl font-bold tracking-tight text-white sm:text-7xl sm:leading-[1.02] relative z-10">
         Royale Wager
       </h1>
-      <p class="max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+      <p class="max-w-xl text-lg leading-relaxed text-white sm:text-xl relative z-10 opacity-90">
         Wager on head-to-head Clash Royale matches.
       </p>
-      <div class="h-px w-20 bg-slate-200" aria-hidden="true"></div>
+      <div class="h-1 w-20 bg-gradient-to-r from-transparent via-royale-gold to-transparent relative z-10" aria-hidden="true"></div>
+      
+      <div class="relative z-10 mt-16">
+        <div
+          data-privy-widget="1"
+          data-variant="landing"
+          data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+          data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
+          data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+          data-escrow-program-id="<%= ENV["ESCROW_PROGRAM_ID"].to_s %>"
+        ></div>
+      </div>
     </div>
-
-    <div
-      data-privy-widget="1"
-      data-variant="landing"
-      data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
-      data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
-      data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
-      data-escrow-program-id="<%= ENV["ESCROW_PROGRAM_ID"].to_s %>"
-    ></div>
   </div>
 </main>
 

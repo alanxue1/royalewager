@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 
-export function NumberTicker({ value, startValue = 0, duration = 2000, className = "" }) {
+export function NumberTicker({ value, startValue = 0, duration = 2000, className = "", style = {} }) {
   const [displayValue, setDisplayValue] = useState(startValue)
   const animationFrameRef = useRef(null)
   const startTimeRef = useRef(null)
@@ -46,6 +46,6 @@ export function NumberTicker({ value, startValue = 0, duration = 2000, className
   // Format with 3 decimal places
   const formatted = displayValue.toFixed(3)
 
-  return <span className={className}>{formatted}</span>
+  return <span className={className} style={style}>{formatted}</span>
 }
 

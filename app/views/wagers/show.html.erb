@@ -7,23 +7,22 @@
 
   <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
     <div class="lg:col-span-7 lg:col-start-2">
-      <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-200 px-5 py-4">
-          <h1 class="text-2xl font-semibold text-slate-900">Wager #<%= @wager.id %></h1>
-          <div class="mt-1 font-mono text-sm text-slate-700"><%= @wager.tag_a %> vs <%= @wager.tag_b %></div>
+      <div class="card-royale rounded-xl">
+        <div class="border-b-2 border-supercell-gray px-5 py-4">
+          <h1 class="text-royale-heading text-2xl font-bold text-supercell-dark">Wager #<%= @wager.id %></h1>
+          <div class="mt-1 font-mono text-sm font-semibold text-supercell-dark"><%= @wager.tag_a %> vs <%= @wager.tag_b %></div>
     </div>
 
         <div class="grid grid-cols-1 gap-4 px-5 py-4 sm:grid-cols-2">
-          <div class="rounded-lg border border-slate-200 p-4">
-            <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Status</div>
+          <div class="rounded-lg border-2 border-supercell-gray bg-gradient-to-br from-white to-supercell-light p-4">
+            <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Status</div>
             <div
-              class="mt-2 text-lg font-semibold text-slate-900"
-              style="<%= @wager.status_settled? ? 'color: rgb(0, 153, 102)' : '' %>"
+              class="mt-2 text-lg font-bold <%= @wager.status_settled? ? 'text-royale-victory' : 'text-supercell-dark' %>"
             ><%= @wager.status_display %></div>
-            <div class="mt-2 text-sm text-slate-700">
-              Amount: <span class="font-mono"><%= @wager.amount_sol %></span> sol
+            <div class="mt-2 text-sm font-semibold text-supercell-dark">
+              Amount: <span class="font-mono text-royale-gold"><%= @wager.amount_sol %></span> sol
     </div>
-            <div class="mt-1 text-sm text-slate-700">
+            <div class="mt-1 text-sm text-supercell-dark">
               Deadline: <span class="font-mono"><%= @wager.deadline_at&.utc&.iso8601 %></span>
   </div>
 
@@ -33,21 +32,21 @@
                 <%= button_to "Accept wager",
                   accept_wager_path(@wager),
                   method: :post,
-                  class: "inline-flex cursor-pointer items-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950" %>
+                  class: "btn-royale inline-flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white" %>
               </div>
             <% end %>
     </div>
 
-          <div class="rounded-lg border border-slate-200 p-4">
-            <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Resolution</div>
-            <div class="mt-2 text-sm text-slate-700">
+          <div class="rounded-lg border-2 border-supercell-gray bg-gradient-to-br from-white to-supercell-light p-4">
+            <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Resolution</div>
+            <div class="mt-2 text-sm font-semibold text-supercell-dark">
               Battle time: <span class="font-mono"><%= @wager.battle_time&.utc&.iso8601 || "-" %></span>
             </div>
-            <div class="mt-1 text-sm text-slate-700">
-              Winner tag: <span class="font-mono"><%= @wager.winner_tag || "-" %></span>
+            <div class="mt-1 text-sm font-semibold text-supercell-dark">
+              Winner tag: <span class="font-mono text-royale-victory"><%= @wager.winner_tag || "-" %></span>
             </div>
-            <div class="mt-1 text-sm text-slate-700">
-              Fingerprint: <span class="font-mono break-all"><%= @wager.battle_fingerprint || "-" %></span>
+            <div class="mt-1 text-sm font-semibold text-supercell-dark">
+              Fingerprint: <span class="font-mono break-all text-xs"><%= @wager.battle_fingerprint || "-" %></span>
             </div>
     </div>
   </div>
@@ -76,8 +75,8 @@
         <% end %>
 
         <% if @wager.status_settled? %>
-          <div class="border-t border-slate-200 px-5 py-4">
-            <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Decks</div>
+          <div class="border-t-2 border-supercell-gray px-5 py-4">
+            <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Decks</div>
 
             <% if @wager.respond_to?(:battle_data) && @wager.battle_data.present? %>
               <% a = @wager.battle_data["tag_a"] || {} %>
@@ -90,34 +89,34 @@
               <% b_tag_norm = (b["tag"].presence || @wager.tag_b).to_s.strip.upcase %>
 
               <div class="mt-3 flex items-center justify-between">
-                <div class="text-sm font-semibold text-slate-900"><%= mode_name %></div>
-                <div class="text-sm font-semibold text-slate-900"><%= a_crowns %> - <%= b_crowns %></div>
+                <div class="text-sm font-display font-bold text-supercell-dark"><%= mode_name %></div>
+                <div class="text-sm font-display font-bold text-supercell-dark"><%= a_crowns %> - <%= b_crowns %></div>
               </div>
 
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div class="rounded-lg border border-slate-200 bg-white p-4">
+                <div class="rounded-lg border-2 border-supercell-gray bg-gradient-to-br from-white to-supercell-light p-4">
                   <div class="flex items-start justify-between gap-3">
                     <div>
                       <div class="flex items-center gap-2">
                         <% if winner_tag_norm.present? && winner_tag_norm == a_tag_norm %>
-                          <span class="rounded-md bg-emerald-600 px-2 py-1 text-xs font-semibold text-white">Victory</span>
+                          <span class="rounded-md bg-royale-victory px-2 py-1 text-xs font-display font-bold text-white shadow-sm">Victory</span>
                         <% elsif winner_tag_norm.present? %>
-                          <span class="rounded-md bg-slate-700 px-2 py-1 text-xs font-semibold text-white">Defeat</span>
+                          <span class="rounded-md bg-royale-defeat px-2 py-1 text-xs font-display font-bold text-white shadow-sm">Defeat</span>
                         <% end %>
-                        <div class="text-sm font-semibold text-slate-900"><%= a["name"].presence || @wager.tag_a %></div>
+                        <div class="text-sm font-display font-bold text-supercell-dark"><%= a["name"].presence || @wager.tag_a %></div>
                       </div>
                       <% clan_name = a.dig("clan", "name").to_s.presence %>
                       <% if clan_name.present? %>
-                        <div class="mt-1 text-xs text-slate-500"><%= clan_name %></div>
+                        <div class="mt-1 text-xs text-supercell-medium"><%= clan_name %></div>
                       <% end %>
                     </div>
                     <div class="text-right">
                       <% if a["startingTrophies"].present? %>
-                        <div class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800"><%= a["startingTrophies"] %></div>
+                        <div class="rounded-md bg-gradient-to-br from-royale-gold to-royale-crown px-2 py-1 text-xs font-display font-bold text-supercell-dark shadow-sm"><%= a["startingTrophies"] %></div>
                       <% end %>
                       <% if a["trophyChange"].present? %>
                         <% tc = a["trophyChange"].to_i %>
-                        <div class="mt-1 text-xs font-semibold <%= tc >= 0 ? "text-emerald-900" : "text-red-700" %>">
+                        <div class="mt-1 text-xs font-display font-bold <%= tc >= 0 ? "text-royale-victory" : "text-royale-defeat" %>">
                           <%= tc >= 0 ? "+#{tc}" : tc %>
                         </div>
                       <% end %>
@@ -126,10 +125,14 @@
                   <div class="mt-3 cr-deck-grid">
                     <% (a["deck"] || []).each do |card| %>
                       <% icon = cr_card_icon_url(card["id"]) %>
+                      <% card_id_js = card["id"].to_s.gsub("'", "\\'") %>
+                      <% card_name_js = (card["name"] || "").to_s.gsub("'", "\\'") %>
+                      <% icon_url_js = (icon || "").to_s.gsub("'", "\\'") %>
                       <div class="cr-card">
                         <div class="cr-card__media">
                           <% if icon.present? %>
-                            <%= image_tag icon, alt: (card["name"] || "Card"), class: "cr-card__img", loading: "lazy" %>
+                            <%= image_tag icon, alt: (card["name"] || "Card"), class: "cr-card__img", loading: "lazy", referrerpolicy: "no-referrer", onerror: "fetch('http://127.0.0.1:7242/ingest/15fe5027-9a0e-4021-a5d7-6a1186039492',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'wagers/show.html.erb:131',message:'Image load error',data:{card_id:'#{card_id_js}',card_name:'#{card_name_js}',icon_url:'#{icon_url_js}'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{}); this.style.display='none'; this.nextElementSibling.style.display='flex';" %>
+                            <div class="cr-card__placeholder" style="display: none;"><%= card["name"] || card["id"] %></div>
                           <% else %>
                             <div class="cr-card__placeholder"><%= card["name"] || card["id"] %></div>
                           <% end %>
@@ -139,29 +142,29 @@
                   </div>
                 </div>
 
-                <div class="rounded-lg border border-slate-200 bg-white p-4">
+                <div class="rounded-lg border-2 border-supercell-gray bg-gradient-to-br from-white to-supercell-light p-4">
                   <div class="flex items-start justify-between gap-3">
                     <div>
                       <div class="flex items-center gap-2">
                         <% if winner_tag_norm.present? && winner_tag_norm == b_tag_norm %>
-                          <span class="rounded-md bg-emerald-600 px-2 py-1 text-xs font-semibold text-white">Victory</span>
+                          <span class="rounded-md bg-royale-victory px-2 py-1 text-xs font-display font-bold text-white shadow-sm">Victory</span>
                         <% elsif winner_tag_norm.present? %>
-                          <span class="rounded-md bg-slate-700 px-2 py-1 text-xs font-semibold text-white">Defeat</span>
+                          <span class="rounded-md bg-royale-defeat px-2 py-1 text-xs font-display font-bold text-white shadow-sm">Defeat</span>
                         <% end %>
-                        <div class="text-sm font-semibold text-slate-900"><%= b["name"].presence || @wager.tag_b %></div>
+                        <div class="text-sm font-display font-bold text-supercell-dark"><%= b["name"].presence || @wager.tag_b %></div>
                       </div>
                       <% clan_name = b.dig("clan", "name").to_s.presence %>
                       <% if clan_name.present? %>
-                        <div class="mt-1 text-xs text-slate-500"><%= clan_name %></div>
+                        <div class="mt-1 text-xs text-supercell-medium"><%= clan_name %></div>
                       <% end %>
                     </div>
                     <div class="text-right">
                       <% if b["startingTrophies"].present? %>
-                        <div class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800"><%= b["startingTrophies"] %></div>
+                        <div class="rounded-md bg-gradient-to-br from-royale-gold to-royale-crown px-2 py-1 text-xs font-display font-bold text-supercell-dark shadow-sm"><%= b["startingTrophies"] %></div>
                       <% end %>
                       <% if b["trophyChange"].present? %>
                         <% tc = b["trophyChange"].to_i %>
-                        <div class="mt-1 text-xs font-semibold <%= tc >= 0 ? "text-emerald-900" : "text-red-700" %>">
+                        <div class="mt-1 text-xs font-display font-bold <%= tc >= 0 ? "text-royale-victory" : "text-royale-defeat" %>">
                           <%= tc >= 0 ? "+#{tc}" : tc %>
                         </div>
                       <% end %>
@@ -170,10 +173,14 @@
                   <div class="mt-3 cr-deck-grid">
                     <% (b["deck"] || []).each do |card| %>
                       <% icon = cr_card_icon_url(card["id"]) %>
+                      <% card_id_js = card["id"].to_s.gsub("'", "\\'") %>
+                      <% card_name_js = (card["name"] || "").to_s.gsub("'", "\\'") %>
+                      <% icon_url_js = (icon || "").to_s.gsub("'", "\\'") %>
                       <div class="cr-card">
                         <div class="cr-card__media">
                           <% if icon.present? %>
-                            <%= image_tag icon, alt: (card["name"] || "Card"), class: "cr-card__img", loading: "lazy" %>
+                            <%= image_tag icon, alt: (card["name"] || "Card"), class: "cr-card__img", loading: "lazy", referrerpolicy: "no-referrer", onerror: "fetch('http://127.0.0.1:7242/ingest/15fe5027-9a0e-4021-a5d7-6a1186039492',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'wagers/show.html.erb:176',message:'Image load error',data:{card_id:'#{card_id_js}',card_name:'#{card_name_js}',icon_url:'#{icon_url_js}'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{}); this.style.display='none'; this.nextElementSibling.style.display='flex';" %>
+                            <div class="cr-card__placeholder" style="display: none;"><%= card["name"] || card["id"] %></div>
                           <% else %>
                             <div class="cr-card__placeholder"><%= card["name"] || card["id"] %></div>
                           <% end %>
@@ -184,13 +191,13 @@
                 </div>
               </div>
             <% else %>
-              <div class="mt-2 text-sm text-slate-600">Deck unavailable (settled before deck tracking).</div>
+              <div class="mt-2 text-sm text-supercell-medium">Deck unavailable (settled before deck tracking).</div>
             <% end %>
           </div>
         <% end %>
 
-        <div class="border-t border-slate-200 px-5 py-4">
-          <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Escrow</div>
+        <div class="border-t-2 border-supercell-gray px-5 py-4">
+          <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Escrow</div>
           <div class="mt-3">
       <div
         id="wager-escrow-root"
@@ -211,20 +218,20 @@
         </div>
 
         <% if current_user.present? && current_user.id == @wager.creator_id && @wager.joiner_id.nil? %>
-          <div class="border-t border-slate-200 px-5 py-4">
-            <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Invite link</div>
+          <div class="border-t-2 border-supercell-gray px-5 py-4">
+            <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Invite link</div>
 
             <% invite_url = flash[:invite_url].presence || (@active_invite.present? ? wager_invite_url(@active_invite.token) : nil) %>
             
             <% if flash[:invite_url].present? %>
-              <div class="mt-2 text-sm text-slate-700">
-                <span class="font-semibold">New link:</span>
-                <span class="ml-2 font-mono break-all" id="invite-link-text"><%= flash[:invite_url] %></span>
+              <div class="mt-2 text-sm font-semibold text-supercell-dark">
+                <span class="font-display">New link:</span>
+                <span class="ml-2 font-mono break-all text-royale-blue" id="invite-link-text"><%= flash[:invite_url] %></span>
               </div>
             <% elsif @active_invite.present? %>
-              <div class="mt-2 text-sm text-slate-700">
-                <span class="font-semibold">Current link:</span>
-                <span class="ml-2 font-mono break-all" id="invite-link-text"><%= wager_invite_url(@active_invite.token) %></span>
+              <div class="mt-2 text-sm font-semibold text-supercell-dark">
+                <span class="font-display">Current link:</span>
+                <span class="ml-2 font-mono break-all text-royale-blue" id="invite-link-text"><%= wager_invite_url(@active_invite.token) %></span>
               </div>
             <% end %>
 
@@ -232,13 +239,13 @@
               <%= button_to "Generate invite link",
                 invite_wager_path(@wager),
                 method: :post,
-                class: "inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100" %>
+                class: "btn-royale-secondary inline-flex cursor-pointer items-center rounded-lg px-3 py-2 text-sm text-white" %>
               
               <% if invite_url.present? %>
                 <button
                   type="button"
                   onclick="copyInviteLink()"
-                  class="inline-flex cursor-pointer items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100"
+                  class="btn-royale-secondary inline-flex cursor-pointer items-center rounded-lg px-3 py-2 text-sm text-white"
                 >
                   Copy link
                 </button>
@@ -276,8 +283,8 @@
     </div>
 
     <div class="lg:col-span-4 lg:col-start-9">
-      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Wallet</div>
+      <div class="card-royale rounded-xl p-5">
+        <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Wallet</div>
         <div class="mt-4">
           <div
             data-privy-widget="1"

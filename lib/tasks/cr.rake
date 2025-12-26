@@ -37,6 +37,24 @@ namespace :cr do
     ResolvePendingWagersJob.perform_now
     puts "Done. Check wagers for status updates."
   end
+
+  desc "Populate card catalog cache"
+  task populate_cards: :environment do
+    puts "Populating Clash Royale card catalog..."
+    catalog = ClashRoyale::CardsCatalog.new
+    icons = catalog.icons_by_id
+    puts "Loaded #{icons.size} card icons"
+    
+    if icons.empty?
+      puts "WARNING: No card icons loaded. Check CLASH_ROYALE_API_TOKEN and API connectivity."
+    else
+      sample_ids = icons.keys.first(5)
+      puts "Sample card IDs: #{sample_ids.join(', ')}"
+      sample_ids.each do |id|
+        puts "  ID #{id}: #{icons[id]}"
+      end
+    end
+  end
 end
 
 

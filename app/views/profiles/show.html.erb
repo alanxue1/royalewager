@@ -1,25 +1,25 @@
 <div class="mx-auto max-w-xl px-6 py-10">
-  <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+  <div class="card-royale rounded-xl p-6">
     <div class="flex items-center justify-between gap-4">
-      <h1 class="text-2xl font-semibold text-slate-900">Profile</h1>
-      <%= link_to "Back", wagers_path, class: "text-sm font-medium text-slate-700 hover:underline" %>
+      <h1 class="text-royale-heading text-2xl font-bold text-supercell-dark">Profile</h1>
+      <%= link_to "Back", wagers_path, class: "text-sm font-display font-bold text-royale-blue hover:underline" %>
     </div>
 
-    <p class="mt-2 text-sm text-slate-600">
-      Set your Clash Royale player tag. This will be used as your “Player A” tag when you create wagers, and as your tag when you accept as a joiner.
+    <p class="mt-2 text-sm text-supercell-medium">
+      Set your Clash Royale player tag. This will be used as your "Player A" tag when you create wagers, and as your tag when you accept as a joiner.
     </p>
 
     <%= form_with model: @user, url: profile_path, method: :patch, class: "mt-6 space-y-4" do |f| %>
       <div>
-        <%= f.label :clash_royale_tag, "Clash Royale tag", class: "block text-sm font-semibold text-slate-900" %>
-        <%= f.text_field :clash_royale_tag, placeholder: "#P0LYQ2", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-sm text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" %>
+        <%= f.label :clash_royale_tag, "Clash Royale tag", class: "block text-sm font-display font-bold text-supercell-dark" %>
+        <%= f.text_field :clash_royale_tag, placeholder: "#P0LYQ2", class: "mt-2 w-full rounded-lg border-2 border-supercell-gray bg-white px-3 py-2 font-mono text-sm text-supercell-dark focus:border-royale-blue focus:outline-none focus:ring-2 focus:ring-royale-blue" %>
         <% if @user.errors[:clash_royale_tag].present? %>
-          <div class="mt-2 text-sm text-red-600"><%= @user.errors[:clash_royale_tag].first %></div>
+          <div class="mt-2 text-sm font-semibold text-royale-defeat"><%= @user.errors[:clash_royale_tag].first %></div>
         <% end %>
       </div>
 
       <div class="flex items-center justify-end">
-        <%= f.submit "Save", class: "inline-flex cursor-pointer items-center rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950" %>
+        <%= f.submit "Save", class: "btn-royale inline-flex cursor-pointer items-center rounded-lg px-4 py-2.5 text-sm text-white" %>
       </div>
     <% end %>
   </div>

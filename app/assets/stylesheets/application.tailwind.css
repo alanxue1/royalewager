@@ -5,7 +5,176 @@
 @source "./app/helpers/**/*.rb";
 @source "./app/javascript/**/*.{js,jsx,ts,tsx}";
 
-/* Deck layout helpers (avoid relying on generated utility presence) */
+/* Custom fonts */
+@font-face {
+  font-family: 'Clash';
+  src: url('/assets/fonts/Clash_Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash';
+  src: url('/assets/fonts/Clash_Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base styles */
+body {
+  min-height: 100vh;
+  color: #191919;
+}
+
+/* Clash Royale themed buttons */
+.btn-royale {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  font-family: 'Clash', sans-serif;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.btn-royale:hover {
+  background: linear-gradient(135deg, #5BA0F2 0%, #408ACD 100%);
+  box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-royale:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn-royale-secondary {
+  background: linear-gradient(135deg, #666666 0%, #4A4A4A 100%);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  font-family: 'Clash', sans-serif;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.btn-royale-secondary:hover {
+  background: linear-gradient(135deg, #777777 0%, #5A5A5A 100%);
+  box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Card styles */
+.card-royale {
+  background: #FFFFFF;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.card-royale-dark {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.98) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Text styles */
+.text-royale-title {
+  font-family: 'Clash', sans-serif;
+  font-weight: bold;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+.text-royale-heading {
+  font-family: 'Clash', sans-serif;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* Custom color utilities */
+.text-royale-blue {
+  color: #4A90E2;
+}
+
+.text-royale-gold {
+  color: #FFD700;
+}
+
+.text-royale-crown {
+  color: #FFA500;
+}
+
+.text-royale-victory {
+  color: rgb(34, 133, 208);
+}
+
+.text-royale-defeat {
+  color: rgb(220, 40, 40);
+}
+
+.text-supercell-dark {
+  color: #191919;
+}
+
+.text-supercell-medium {
+  color: #666666;
+}
+
+.text-supercell-light {
+  color: #F2F2F2;
+}
+
+.border-royale-blue {
+  border-color: #4A90E2;
+}
+
+.border-royale-gold {
+  border-color: #FFD700;
+}
+
+.border-royale-victory {
+  border-color: rgb(34, 133, 208);
+}
+
+.border-royale-defeat {
+  border-color: rgb(220, 40, 40);
+}
+
+.border-supercell-gray {
+  border-color: #CCCCCC;
+}
+
+.bg-royale-victory {
+  background-color: rgb(34, 133, 208);
+}
+
+.bg-royale-defeat {
+  background-color: rgb(220, 40, 40);
+}
+
+.bg-royale-gold {
+  background-color: #FFD700;
+}
+
+.bg-royale-crown {
+  background-color: #FFA500;
+}
+
+.shadow-royale {
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.shadow-royale-lg {
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Deck layout helpers */
 @layer utilities {
   .cr-deck-grid {
     display: grid;
@@ -21,15 +190,20 @@
 
   .cr-card {
     overflow: hidden;
-    border: 1px solid var(--color-slate-200);
-    border-radius: var(--radius-lg);
-    background: var(--color-white);
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    background: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
   }
 
   .cr-card__media {
-    background: var(--color-slate-50);
+    background: #F2F2F2;
     aspect-ratio: 1 / 1;
     overflow: hidden;
+    position: relative;
+    width: 100%;
+    min-height: 0;
   }
 
   .cr-card__img {
@@ -39,6 +213,11 @@
     object-position: center center;
     display: block;
     transform: scale(1.15);
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   .cr-card__placeholder {
@@ -53,5 +232,4 @@
     font-weight: var(--font-weight-semibold);
     color: var(--color-slate-700);
   }
-
 }

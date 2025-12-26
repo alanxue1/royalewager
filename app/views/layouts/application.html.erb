@@ -17,7 +17,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
+  <body style="background-image: url('<%= asset_path('background_clash.png') %>'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
     <%= yield %>
     <div id="toast-root"></div>
   </body>

@@ -159,7 +159,6 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
       refreshBalance()
     }
     window.addEventListener("royale:refreshBalance", handleBalanceRefresh)
-
     // Listen for wager-win balance change events to animate the wallet balance in-place
     const applyTicker = ({ startLamports, endLamports, kind }) => {
       if (typeof startLamports !== "number" || typeof endLamports !== "number") return
@@ -431,7 +430,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     return (
       <div className="w-full">
         <div className="text-center">
-          <div className="text-3xl font-extrabold tracking-tight text-slate-900">
+          <div className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Clash', sans-serif" }}>
             {balanceBusy && !showTicker ? (
               "…"
             ) : showTicker ? (
@@ -441,14 +440,15 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
                 startValue={tickerStartSol}
                 duration={2000}
                 className={`tabular-nums ${tickerAccent}`}
+                style={{ fontFamily: "'Clash', sans-serif" }}
               />
             ) : (
               balanceSolFixed || "—"
             )}{" "}
-            <span className="text-base font-semibold text-slate-600">SOL</span>
+            <span className="text-base font-semibold text-slate-600" style={{ fontFamily: "'Clash', sans-serif" }}>SOL</span>
           </div>
           {showTicker ? (
-            <div className={`mt-1 text-xs font-semibold ${tickerAccent}`}>
+            <div className={`mt-1 text-xs font-semibold ${tickerAccent}`} style={{ fontFamily: "'Clash', sans-serif" }}>
               {tickerIsUp ? "+" : ""}
               {tickerDeltaSolFixed} SOL
             </div>
@@ -459,6 +459,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
           <button
             type="button"
             className="w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ fontFamily: "'Righteous', cursive" }}
             onClick={copySolanaAddress}
             disabled={!hasSolanaWallet}
           >
@@ -468,6 +469,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
           <button
             type="button"
             className="w-full cursor-pointer rounded-lg bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ fontFamily: "'Righteous', cursive" }}
             onClick={() => onFund({ solanaCluster: solanaCluster || "devnet", solanaRpcUrl })}
             disabled={!hasSolanaWallet || fundBusy}
           >
@@ -476,7 +478,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
         </div>
 
         {!hasSolanaWallet ? (
-          <div className="mt-3 text-center text-xs text-slate-600">No Solana wallet yet. Logout + login again.</div>
+          <div className="mt-3 text-center text-xs text-slate-600" style={{ fontFamily: "'Clash', sans-serif" }}>No Solana wallet yet. Logout + login again.</div>
         ) : null}
       </div>
     )
