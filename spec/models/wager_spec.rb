@@ -1,13 +1,13 @@
 require "rails_helper"
 
 RSpec.describe Wager, type: :model do
-  it "validates presence and amount" do
+  it "allows tag_b to be nil until a joiner is assigned" do
     creator = User.create!
 
     wager = described_class.new(
       creator: creator,
       tag_a: "#AAAAAA",
-      tag_b: "#BBBBBB",
+      tag_b: nil,
       amount_lamports: 1,
       deadline_at: 1.hour.from_now
     )

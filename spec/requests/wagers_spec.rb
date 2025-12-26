@@ -42,6 +42,10 @@ RSpec.describe "Wagers", type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  def set_profile_tag!(tag = "#P0LYQ2")
+    User.find(session[:user_id]).update!(clash_royale_tag: tag)
+  end
+
   describe "GET /wagers" do
     it "renders successfully" do
       login!
@@ -51,8 +55,16 @@ RSpec.describe "Wagers", type: :request do
   end
 
   describe "GET /wagers/new" do
-    it "renders successfully" do
+    it "redirects to profile when missing clash tag" do
       login!
+      get "/wagers/new"
+      expect(response).to have_http_status(:found)
+      expect(response.headers["Location"]).to include("/profile")
+    end
+
+    it "renders successfully when clash tag is set" do
+      login!
+      set_profile_tag!
       get "/wagers/new"
       expect(response).to have_http_status(:ok)
     end
@@ -61,31 +73,29 @@ RSpec.describe "Wagers", type: :request do
   describe "POST /wagers" do
     it "creates a wager and redirects to show" do
       login!
+      set_profile_tag!
       post "/wagers", params: {
         wager: {
-          tag_a: "#AAAAAA",
-          tag_b: "#BBBBBB",
           amount_lamports: 1234,
-          deadline_at: 1.hour.from_now
+          duration_minutes: 10
         }
       }
 
       expect(response).to have_http_status(:found)
       wager = Wager.order(:id).last
       expect(wager).not_to be_nil
-      expect(wager.tag_a).to eq("#AAAAAA")
-      expect(wager.tag_b).to eq("#BBBBBB")
+      expect(wager.tag_a).to eq("#P0LYQ2")
+      expect(wager.tag_b).to be_nil
       expect(wager.status).to eq("awaiting_creator_deposit")
     end
 
     it "re-renders form with errors" do
       login!
+      set_profile_tag!
       post "/wagers", params: {
         wager: {
-          tag_a: "",
-          tag_b: "",
           amount_lamports: 0,
-          deadline_at: nil
+          duration_minutes: 10
         }
       }
 
@@ -101,7 +111,7 @@ RSpec.describe "Wagers", type: :request do
       wager = Wager.create!(
         creator: creator,
         tag_a: "#AAAAAA",
-        tag_b: "#BBBBBB",
+        tag_b: nil,
         amount_lamports: 1234,
         deadline_at: 1.hour.from_now,
         status: :awaiting_creator_deposit
