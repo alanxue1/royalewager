@@ -77,6 +77,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
   const [tickerEndLamports, setTickerEndLamports] = useState(null)
   const [tickerDeltaLamports, setTickerDeltaLamports] = useState(null)
   const [tickerSeq, setTickerSeq] = useState(0)
+  const [tickerKind, setTickerKind] = useState("") // "win" | "deposit"
 
   const copySolanaAddress = async () => {
     if (!solanaAddress) return
@@ -160,6 +161,20 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     window.addEventListener("royale:refreshBalance", handleBalanceRefresh)
 
     // Listen for wager-win balance change events to animate the wallet balance in-place
+    const applyTicker = ({ startLamports, endLamports, kind }) => {
+      if (typeof startLamports !== "number" || typeof endLamports !== "number") return
+      if (startLamports === endLamports) return
+
+      setTickerStartLamports(startLamports)
+      setTickerEndLamports(endLamports)
+      setTickerDeltaLamports(endLamports - startLamports)
+      setTickerKind(kind || "")
+      setTickerSeq((n) => n + 1)
+
+      // Keep the static balance in sync with the end value
+      setBalanceLamports(endLamports)
+    }
+
     const handleWagerWinBalanceChange = (e) => {
       const detail = e?.detail || {}
       const startLamports = typeof detail.startLamports === "number" ? detail.startLamports : null
@@ -167,23 +182,29 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
       if (startLamports === null || endLamports === null) return
       if (endLamports <= startLamports) return
 
-      setTickerStartLamports(startLamports)
-      setTickerEndLamports(endLamports)
-      setTickerDeltaLamports(endLamports - startLamports)
-      setTickerSeq((n) => n + 1)
-
-      // Keep the static balance in sync with the end value
-      setBalanceLamports(endLamports)
-
+      applyTicker({ startLamports, endLamports, kind: "win" })
       fireWinConfetti()
     }
     window.addEventListener("royale:wagerWinBalanceChange", handleWagerWinBalanceChange)
+
+    // Listen for generic wallet balance changes (e.g., deposits) to animate the wallet balance.
+    const handleWalletBalanceChange = (e) => {
+      const detail = e?.detail || {}
+      const startLamports = typeof detail.startLamports === "number" ? detail.startLamports : null
+      const endLamports = typeof detail.endLamports === "number" ? detail.endLamports : null
+      const kind = typeof detail.kind === "string" ? detail.kind : ""
+      if (startLamports === null || endLamports === null) return
+
+      applyTicker({ startLamports, endLamports, kind })
+    }
+    window.addEventListener("royale:walletBalanceChange", handleWalletBalanceChange)
 
     return () => {
       cancelled = true
       window.clearInterval(t)
       window.removeEventListener("royale:refreshBalance", handleBalanceRefresh)
       window.removeEventListener("royale:wagerWinBalanceChange", handleWagerWinBalanceChange)
+      window.removeEventListener("royale:walletBalanceChange", handleWalletBalanceChange)
     }
   }, [ready, authenticated, solanaAddress, solanaRpcUrl])
 
@@ -399,10 +420,13 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     const showTicker =
       typeof tickerStartLamports === "number" &&
       typeof tickerEndLamports === "number" &&
-      tickerEndLamports > tickerStartLamports
+      tickerEndLamports !== tickerStartLamports
     const tickerStartSol = showTicker ? tickerStartLamports / LAMPORTS_PER_SOL : 0
     const tickerEndSol = showTicker ? tickerEndLamports / LAMPORTS_PER_SOL : 0
     const tickerDeltaSolFixed = showTicker ? ((tickerDeltaLamports || 0) / LAMPORTS_PER_SOL).toFixed(3) : ""
+    const tickerIsUp = showTicker ? (tickerDeltaLamports || 0) > 0 : false
+    const tickerAccent =
+      tickerKind === "win" || tickerIsUp ? "text-emerald-700" : "text-rose-700"
 
     return (
       <div className="w-full">
@@ -416,7 +440,7 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
                 value={tickerEndSol}
                 startValue={tickerStartSol}
                 duration={2000}
-                className="tabular-nums text-emerald-700"
+                className={`tabular-nums ${tickerAccent}`}
               />
             ) : (
               balanceSolFixed || "—"
@@ -424,7 +448,10 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
             <span className="text-base font-semibold text-slate-600">SOL</span>
           </div>
           {showTicker ? (
-            <div className="mt-1 text-xs font-semibold text-emerald-700">+{tickerDeltaSolFixed} SOL</div>
+            <div className={`mt-1 text-xs font-semibold ${tickerAccent}`}>
+              {tickerIsUp ? "+" : ""}
+              {tickerDeltaSolFixed} SOL
+            </div>
           ) : null}
         </div>
 

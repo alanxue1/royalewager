@@ -42,12 +42,15 @@ module Oracle
 
       Rails.logger.info("[Oracle::ResolveWager] Match found: wager_id=#{wager.id} battle_time=#{result.battle_time} winner=#{result.winner_tag} is_tie=#{result.is_tie}")
 
+      battle_data = build_battle_data(battle: result.battle, wager: wager)
+
       if result.is_tie
         wager.update!(
           status: :refunded,
           battle_time: result.battle_time,
           battle_fingerprint: result.battle_fingerprint,
-          winner_tag: nil
+          winner_tag: nil,
+          battle_data: battle_data
         )
         Rails.logger.info("[Oracle::ResolveWager] Wager refunded (tie): id=#{wager.id}")
       else
@@ -55,7 +58,8 @@ module Oracle
           status: :resolved,
           battle_time: result.battle_time,
           battle_fingerprint: result.battle_fingerprint,
-          winner_tag: result.winner_tag
+          winner_tag: result.winner_tag,
+          battle_data: battle_data
         )
         Rails.logger.info("[Oracle::ResolveWager] Wager resolved: id=#{wager.id} winner=#{result.winner_tag}")
       end
@@ -64,6 +68,82 @@ module Oracle
     rescue ClashRoyale::Client::ConfigError, ClashRoyale::Client::HttpError => e
       Rails.logger.error("[Oracle::ResolveWager] API error: wager_id=#{wager.id} error=#{e.class} msg=#{e.message}")
       raise Error, e.message
+    end
+
+    private
+
+    def normalize_tag(tag)
+      s = tag.to_s.strip.upcase
+      s = "##{s}" if s.present? && !s.start_with?("#")
+      s
+    end
+
+    def slim_cards(cards)
+      (cards || []).map do |c|
+        {
+          "id" => c["id"],
+          "name" => c["name"],
+          "level" => c["level"],
+          "maxLevel" => c["maxLevel"]
+        }
+      end
+    end
+
+    def build_player_payload(player_hash)
+      clan = player_hash["clan"].is_a?(Hash) ? player_hash["clan"] : {}
+      {
+        "tag" => normalize_tag(player_hash["tag"]),
+        "name" => player_hash["name"],
+        "crowns" => player_hash["crowns"],
+        "startingTrophies" => player_hash["startingTrophies"],
+        "trophyChange" => player_hash["trophyChange"],
+        "clan" => {
+          "tag" => clan["tag"],
+          "name" => clan["name"],
+          "badgeId" => clan["badgeId"]
+        },
+        "deck" => slim_cards(player_hash["cards"])
+      }
+    end
+
+    def build_battle_data(battle:, wager:)
+      team = (battle["team"] || []).first || {}
+      opponent = (battle["opponent"] || []).first || {}
+
+      tag_a = normalize_tag(wager.tag_a)
+      tag_b = normalize_tag(wager.tag_b)
+
+      team_tag = normalize_tag(team["tag"])
+      opp_tag = normalize_tag(opponent["tag"])
+
+      # Map battle players onto wager participants (tag_a/tag_b) deterministically.
+      a_player =
+        if team_tag == tag_a
+          team
+        elsif opp_tag == tag_a
+          opponent
+        else
+          team
+        end
+
+      b_player =
+        if team_tag == tag_b
+          team
+        elsif opp_tag == tag_b
+          opponent
+        else
+          opponent
+        end
+
+      {
+        "battleTime" => battle["battleTime"],
+        "type" => battle["type"],
+        "gameMode" => battle["gameMode"],
+        "tag_a_crowns" => Integer(a_player["crowns"] || 0),
+        "tag_b_crowns" => Integer(b_player["crowns"] || 0),
+        "tag_a" => build_player_payload(a_player),
+        "tag_b" => build_player_payload(b_player)
+      }
     end
   end
 end

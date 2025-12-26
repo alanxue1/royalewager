@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_26_020200) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_26_040000) do
   create_table "users", force: :cascade do |t|
     t.string "privy_user_id"
     t.string "email"
@@ -59,6 +59,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_26_020200) do
     t.string "onchain_action"
     t.string "onchain_signature"
     t.datetime "onchain_confirmed_at"
+    t.json "battle_data"
     t.index ["creator_id"], name: "index_wagers_on_creator_id"
     t.index ["joiner_id"], name: "index_wagers_on_joiner_id"
     t.index ["tag_a", "tag_b", "created_at"], name: "index_wagers_on_tag_a_and_tag_b_and_created_at"

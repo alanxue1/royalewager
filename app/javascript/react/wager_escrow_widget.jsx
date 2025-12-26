@@ -393,9 +393,33 @@ export function WagerEscrowWidget({ el }) {
 
     await postJSON(`/wagers/${data.wagerId}/creator_deposit`, { signature: sig })
 
+    // Animate wallet balance for deposits (count down) before reload.
+    // We only do this if we were able to compute balances.
+    let didDispatchDepositTicker = false
+    try {
+      if (typeof balanceBefore === "number" && typeof balanceAfter === "number" && balanceAfter < balanceBefore) {
+        window.dispatchEvent(
+          new CustomEvent("royale:walletBalanceChange", {
+            detail: {
+              kind: "deposit",
+              startLamports: balanceBefore,
+              endLamports: balanceAfter,
+            },
+          }),
+        )
+        didDispatchDepositTicker = true
+      }
+    } catch {
+      // ignore
+    }
+
     // Trigger balance refresh in PrivyWidget before reload
     window.dispatchEvent(new CustomEvent("royale:refreshBalance"))
 
+    // Give the ticker time to play before reload (same duration as wallet ticker).
+    if (didDispatchDepositTicker) {
+      await new Promise((resolve) => setTimeout(resolve, 2200))
+    }
     window.location.reload()
   }
 
@@ -587,11 +611,31 @@ export function WagerEscrowWidget({ el }) {
     fetch('http://127.0.0.1:7242/ingest/15fe5027-9a0e-4021-a5d7-6a1186039492',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'wager_escrow_widget.jsx:sendJoin:success',message:'Joiner deposit completed successfully',data:{signature:sig,joinerAddress:joinerPubkey.toBase58(),balanceBefore,balanceAfter,finalBalance,balanceDiff,expectedAmount:Number(data.amountLamports),vaultGained:vaultBalanceChange?.change||0,charged:balanceDiff !== null && balanceDiff > 0,balanceConsistent:balanceAfter === finalBalance},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F'})}).catch(()=>{});
     // #endregion
     
+    // Animate wallet balance for deposits (count down) before reload.
+    let didDispatchDepositTicker = false
+    try {
+      const end = typeof finalBalance === "number" ? finalBalance : balanceAfter
+      if (typeof balanceBefore === "number" && typeof end === "number" && end < balanceBefore) {
+        window.dispatchEvent(
+          new CustomEvent("royale:walletBalanceChange", {
+            detail: {
+              kind: "deposit",
+              startLamports: balanceBefore,
+              endLamports: end,
+            },
+          }),
+        )
+        didDispatchDepositTicker = true
+      }
+    } catch {
+      // ignore
+    }
+
     // Trigger balance refresh in PrivyWidget before reload
     window.dispatchEvent(new CustomEvent("royale:refreshBalance"))
     
-    // Small delay to ensure balance updates are visible before reload
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // Give the ticker time to play before reload (same duration as wallet ticker).
+    await new Promise((resolve) => setTimeout(resolve, didDispatchDepositTicker ? 2200 : 500))
     window.location.reload()
   }
 

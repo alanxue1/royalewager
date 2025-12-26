@@ -28,6 +28,10 @@ module ClashRoyale
       get_json("/v1/players/#{escape_player_tag(player_tag)}/battlelog")
     end
 
+    def cards
+      get_json("/v1/cards")
+    end
+
     private
 
     def escape_player_tag(tag)
