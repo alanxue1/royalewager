@@ -8,7 +8,7 @@
 /* Custom fonts */
 @font-face {
   font-family: 'Clash';
-  src: url('/assets/fonts/Clash_Regular.otf') format('opentype');
+  src: url('/fonts/Clash_Regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -16,16 +16,21 @@
 
 @font-face {
   font-family: 'Clash';
-  src: url('/assets/fonts/Clash_Bold.otf') format('opentype');
+  src: url('/fonts/Clash_Bold.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
 /* Base styles */
+html {
+  font-family: 'Clash', sans-serif;
+}
+
 body {
   min-height: 100vh;
   color: #191919;
+  font-family: 'Clash', sans-serif;
 }
 
 /* Clash Royale themed buttons */

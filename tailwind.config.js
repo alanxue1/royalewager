@@ -26,6 +26,7 @@ module.exports = {
         },
       },
       fontFamily: {
+        'sans': ['Clash', 'sans-serif'],
         'royale': ['Clash', 'sans-serif'],
         'display': ['Clash', 'sans-serif'],
       },
