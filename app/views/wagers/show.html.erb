@@ -49,6 +49,29 @@
     </div>
   </div>
 
+        <% 
+          # Determine if current user is the winner
+          is_winner = false
+          if current_user.present? && @wager.winner_tag.present?
+            user_tag = current_user.clash_royale_tag.to_s.strip.upcase
+            winner_tag = @wager.winner_tag.to_s.strip.upcase
+            is_winner = user_tag == winner_tag
+          end
+        %>
+
+        <% if is_winner && (@wager.status_resolved? || @wager.status_settled?) %>
+          <div
+            id="winner-celebration-root"
+            data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
+            data-wager-id="<%= @wager.id %>"
+            data-wager-status="<%= @wager.status %>"
+            data-winner-tag="<%= @wager.winner_tag %>"
+            data-is-winner="<%= is_winner %>"
+            data-amount-sol="<%= @wager.amount_sol %>"
+            data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
+          ></div>
+        <% end %>
+
         <div class="border-t border-slate-200 px-5 py-4">
           <div class="text-xs font-semibold uppercase tracking-widest text-slate-500">Escrow</div>
           <div class="mt-3">

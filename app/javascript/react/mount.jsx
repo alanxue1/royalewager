@@ -5,6 +5,7 @@ import { PrivyProvider } from "@privy-io/react-auth"
 import { PrivyWidget } from "./privy_widget"
 import { ToastHost } from "./toast_host"
 import { WagerEscrowWidget } from "./wager_escrow_widget"
+import { WinnerCelebration } from "./winner_celebration"
 
 const roots = new WeakMap()
 function rootFor(el) {
@@ -95,5 +96,33 @@ function mountToastHost() {
 
 document.addEventListener("turbo:load", mountToastHost)
 document.addEventListener("DOMContentLoaded", mountToastHost)
+
+function mountWinnerCelebration() {
+  const el = document.getElementById("winner-celebration-root")
+  if (!el) return
+
+  const { appId } = privyConfigFromDataset(el.dataset)
+  if (!appId) {
+    el.innerText = "Missing PRIVY_APP_ID"
+    return
+  }
+
+  rootFor(el).render(
+    <PrivyProvider
+      appId={appId}
+      config={{
+        appearance: { theme: "dark" },
+        embeddedWallets: {
+          solana: { createOnLogin: "users-without-wallets" },
+        },
+      }}
+    >
+      <WinnerCelebration el={el} />
+    </PrivyProvider>,
+  )
+}
+
+document.addEventListener("turbo:load", mountWinnerCelebration)
+document.addEventListener("DOMContentLoaded", mountWinnerCelebration)
 
 

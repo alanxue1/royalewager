@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { useFundWallet, usePrivy, useSolanaWallets } from "@privy-io/react-auth"
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js"
+import confetti from "canvas-confetti"
+
+import { NumberTicker } from "./number_ticker"
 
 function showToast({ message, tone, href, hrefText }) {
   window.dispatchEvent(
@@ -69,6 +72,12 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
   const [balanceLamports, setBalanceLamports] = useState(null)
   const [balanceBusy, setBalanceBusy] = useState(false)
 
+  // Wallet celebration ticker (driven by WinnerCelebration via window event)
+  const [tickerStartLamports, setTickerStartLamports] = useState(null)
+  const [tickerEndLamports, setTickerEndLamports] = useState(null)
+  const [tickerDeltaLamports, setTickerDeltaLamports] = useState(null)
+  const [tickerSeq, setTickerSeq] = useState(0)
+
   const copySolanaAddress = async () => {
     if (!solanaAddress) return
     await navigator.clipboard.writeText(solanaAddress)
@@ -101,6 +110,35 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     }
   }
 
+  const fireWinConfetti = () => {
+    const duration = 3000
+    const end = Date.now() + duration
+    const colors = ["#26ccff", "#a25afd", "#ff5e7e", "#88ff5a", "#fcff42", "#ffa62d", "#ff36ff"]
+
+    const interval = window.setInterval(() => {
+      if (Date.now() > end) {
+        window.clearInterval(interval)
+        return
+      }
+
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors,
+      })
+
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors,
+      })
+    }, 200)
+  }
+
   useEffect(() => {
     if (!ready || !authenticated) return
     if (!solanaAddress) return
@@ -121,10 +159,31 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     }
     window.addEventListener("royale:refreshBalance", handleBalanceRefresh)
 
+    // Listen for wager-win balance change events to animate the wallet balance in-place
+    const handleWagerWinBalanceChange = (e) => {
+      const detail = e?.detail || {}
+      const startLamports = typeof detail.startLamports === "number" ? detail.startLamports : null
+      const endLamports = typeof detail.endLamports === "number" ? detail.endLamports : null
+      if (startLamports === null || endLamports === null) return
+      if (endLamports <= startLamports) return
+
+      setTickerStartLamports(startLamports)
+      setTickerEndLamports(endLamports)
+      setTickerDeltaLamports(endLamports - startLamports)
+      setTickerSeq((n) => n + 1)
+
+      // Keep the static balance in sync with the end value
+      setBalanceLamports(endLamports)
+
+      fireWinConfetti()
+    }
+    window.addEventListener("royale:wagerWinBalanceChange", handleWagerWinBalanceChange)
+
     return () => {
       cancelled = true
       window.clearInterval(t)
       window.removeEventListener("royale:refreshBalance", handleBalanceRefresh)
+      window.removeEventListener("royale:wagerWinBalanceChange", handleWagerWinBalanceChange)
     }
   }, [ready, authenticated, solanaAddress, solanaRpcUrl])
 
@@ -337,13 +396,36 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
 
   if (variant === "fund_only") {
     const balanceSolFixed = typeof balanceLamports === "number" ? (balanceLamports / LAMPORTS_PER_SOL).toFixed(3) : ""
+    const showTicker =
+      typeof tickerStartLamports === "number" &&
+      typeof tickerEndLamports === "number" &&
+      tickerEndLamports > tickerStartLamports
+    const tickerStartSol = showTicker ? tickerStartLamports / LAMPORTS_PER_SOL : 0
+    const tickerEndSol = showTicker ? tickerEndLamports / LAMPORTS_PER_SOL : 0
+    const tickerDeltaSolFixed = showTicker ? ((tickerDeltaLamports || 0) / LAMPORTS_PER_SOL).toFixed(3) : ""
 
     return (
       <div className="w-full">
         <div className="text-center">
           <div className="text-3xl font-extrabold tracking-tight text-slate-900">
-            {balanceBusy ? "…" : balanceSolFixed || "—"} <span className="text-base font-semibold text-slate-600">SOL</span>
+            {balanceBusy && !showTicker ? (
+              "…"
+            ) : showTicker ? (
+              <NumberTicker
+                key={`wallet-ticker-${tickerSeq}`}
+                value={tickerEndSol}
+                startValue={tickerStartSol}
+                duration={2000}
+                className="tabular-nums text-emerald-700"
+              />
+            ) : (
+              balanceSolFixed || "—"
+            )}{" "}
+            <span className="text-base font-semibold text-slate-600">SOL</span>
           </div>
+          {showTicker ? (
+            <div className="mt-1 text-xs font-semibold text-emerald-700">+{tickerDeltaSolFixed} SOL</div>
+          ) : null}
         </div>
 
         <div className="mt-4 grid w-full grid-cols-2 gap-2">
