@@ -3,11 +3,14 @@ Rails.application.routes.draw do
 
   resources :wagers, only: [:index, :new, :create, :show] do
     member do
-      post :join
+      post :accept
+      post :invite
       post :creator_deposit
       post :joiner_deposit
     end
   end
+  resources :wager_invites, only: [:show], param: :token
+  resource :profile, only: [:show, :update]
   resource :privy_session, only: [:create, :destroy]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
