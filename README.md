@@ -11,9 +11,7 @@ A Rails application for wagering on head-to-head Clash Royale matches, featuring
 
 ## Demo
 
-
-https://github.com/user-attachments/assets/86f3cd57-0c91-4581-b954-83db2930dd36
-
+https://github.com/user-attachments/assets/10ef3458-106e-45fa-bf9c-c0a6219cb008
 
 
 ## Tech Stack
