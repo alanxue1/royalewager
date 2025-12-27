@@ -35,25 +35,28 @@ body {
 
 /* Clash Royale themed buttons */
 .btn-royale {
-  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(to bottom, #6BA3F0 0%, #4A90E2 50%, #357ABD 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2) !important;
   font-family: 'Clash', sans-serif;
-  font-weight: normal;
+  font-weight: bold;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  color: white !important;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
   transition: all 0.2s ease;
 }
 
 .btn-royale:hover {
-  background: linear-gradient(135deg, #5BA0F2 0%, #408ACD 100%);
-  box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(to bottom, #7BB3FF 0%, #5BA0F2 50%, #408ACD 100%);
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.3);
   transform: translateY(-1px);
 }
 
 .btn-royale:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .btn-royale-secondary {
@@ -76,8 +79,26 @@ body {
 /* Card styles */
 .card-royale {
   background: #FFFFFF;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 2px solid #CCCCCC;
+  border-bottom-width: 8px;
+  border-bottom-color: #AAAAAA;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-royale-item {
+  background: #FFFFFF;
+  border: 2px solid #CCCCCC;
+  border-bottom-width: 6px;
+  border-bottom-color: #AAAAAA;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.1s ease;
+}
+
+.card-royale-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
 }
 
 .card-royale-dark {
@@ -91,14 +112,14 @@ body {
 .text-royale-title {
   font-family: 'Clash', sans-serif;
   font-weight: bold;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
   letter-spacing: 1px;
 }
 
 .text-royale-heading {
   font-family: 'Clash', sans-serif;
   font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
   letter-spacing: 0.5px;
 }
 

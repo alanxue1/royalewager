@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   root "home#index"
 
-  resources :wagers, only: [:index, :new, :create, :show] do
+  resources :wagers, only: [:index, :new, :create, :show, :destroy] do
+    collection do
+      delete :clear_all
+    end
     member do
       post :accept
       post :invite

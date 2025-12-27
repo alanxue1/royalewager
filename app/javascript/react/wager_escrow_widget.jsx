@@ -674,7 +674,7 @@ export function WagerEscrowWidget({ el }) {
     return `https://explorer.solana.com/tx/${lastSig}${suffix}`
   }, [lastSig, data.solanaCluster])
 
-  if (!ready) return <div className="text-sm text-gray-500">Loading Privy…</div>
+  if (!ready) return null // Don't show loading during Turbo navigation
   if (!authenticated) return <div className="text-sm text-gray-500">Login to deposit.</div>
   
   // Check if we have wallets even if solReady is false (Privy SDK quirk)
@@ -695,22 +695,18 @@ export function WagerEscrowWidget({ el }) {
         </div>
       )
     }
-    return <div className="text-sm text-gray-500">Loading Solana wallet…</div>
+    return null // Don't show loading during Turbo navigation
   }
   if (!solWalletAddress) return <div className="text-sm text-gray-500">No Solana wallet found. Please connect a wallet.</div>
 
   return (
-    <div className="space-y-2">
-      <div className="text-xs uppercase text-gray-500">Escrow</div>
-      <div className="text-sm text-gray-700">
-        Vault: <span className="font-mono break-all">{vaultAddress || "(set ESCROW_PROGRAM_ID)"}</span>
-      </div>
-
+    <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         {canCreatorDeposit ? (
           <button
             type="button"
-            className="rounded bg-black px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="btn-royale inline-flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50"
+            style={{ fontFamily: "'Clash', sans-serif" }}
             onClick={onCreatorDeposit}
             disabled={busy}
           >
@@ -721,7 +717,8 @@ export function WagerEscrowWidget({ el }) {
         {canJoinAndDeposit ? (
           <button
             type="button"
-            className="rounded bg-black px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="btn-royale inline-flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50"
+            style={{ fontFamily: "'Clash', sans-serif" }}
             onClick={onJoinAndDeposit}
             disabled={busy}
           >
@@ -731,14 +728,13 @@ export function WagerEscrowWidget({ el }) {
       </div>
 
       {explorerTxUrl ? (
-        <div className="text-xs">
+        <div className="text-xs text-supercell-medium">
           Last tx:{" "}
-          <a className="font-mono underline" href={explorerTxUrl} target="_blank" rel="noreferrer">
-            {lastSig}
+          <a className="font-mono text-royale-blue underline" href={explorerTxUrl} target="_blank" rel="noreferrer">
+            {lastSig?.slice(0, 8)}...
           </a>
         </div>
       ) : null}
-
     </div>
   )
 }

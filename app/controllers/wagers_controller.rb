@@ -193,6 +193,22 @@ class WagersController < ApplicationController
     render json: { ok: true }
   end
 
+  def destroy
+    @wager = Wager.find(params[:id])
+    if @wager.creator_id == current_user.id || @wager.joiner_id == current_user.id
+      @wager.destroy
+      redirect_to wagers_path, notice: "Wager deleted"
+    else
+      redirect_to wager_path(@wager), alert: "Not authorized"
+    end
+  end
+
+  def clear_all
+    user_id = current_user.id
+    Wager.where("creator_id = ? OR joiner_id = ?", user_id, user_id).destroy_all
+    redirect_to wagers_path, notice: "All wagers cleared"
+  end
+
   private
 
   def wager_params

@@ -284,15 +284,17 @@
 
     <div class="lg:col-span-4 lg:col-start-9">
       <div class="card-royale rounded-xl p-5">
-        <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Wallet</div>
-        <div class="mt-4">
+        <div class="flex items-center justify-between border-b-2 border-supercell-gray pb-3 mb-4">
+          <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Wallet</div>
+        </div>
+        <div>
           <div
             data-privy-widget="1"
             data-variant="fund_only"
             data-privy-app-id="<%= ENV["PRIVY_APP_ID"].to_s %>"
             data-solana-cluster="<%= ENV.fetch("SOLANA_CLUSTER", "devnet") %>"
             data-solana-rpc-url="<%= ENV.fetch("SOLANA_RPC_URL", "https://api.devnet.solana.com") %>"
-      ></div>
+          ></div>
         </div>
       </div>
     </div>

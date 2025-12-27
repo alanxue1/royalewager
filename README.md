@@ -9,13 +9,9 @@ A Rails application for wagering on head-to-head Clash Royale matches, featuring
 - **Privy Authentication**: Web3 wallet authentication and management
 - **Clash Royale Themed UI**: Custom Clash font family and Supercell brand styling
 
-## Screenshots
+## Demo
 
-### Landing Page
-![Landing Page](app/assets/images/menu.png)
-
-### Wager Page
-![Wager Demo](app/assets/images/wager_demo.png)
+<video src="app/assets/videos/royalewager_demo.mp4" controls width="100%"></video>
 
 ## Tech Stack
 

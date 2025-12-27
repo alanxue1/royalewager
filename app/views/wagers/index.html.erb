@@ -10,27 +10,39 @@
       <div class="card-royale rounded-xl">
         <div class="flex items-center justify-between gap-4 border-b-2 border-supercell-gray px-5 py-4">
           <h1 class="text-royale-heading text-2xl font-bold text-supercell-dark">Wagers</h1>
-          <%= link_to "New wager", new_wager_path, class: "btn-royale inline-flex cursor-pointer items-center rounded-lg px-4 py-2.5 text-sm text-white" %>
+          <div class="flex items-center gap-3">
+            <% if @wagers.any? %>
+              <%= button_to "Clear all", clear_all_wagers_path, method: :delete, data: { turbo_confirm: "Are you sure? This will delete all your wagers." }, class: "text-xs font-bold text-royale-defeat hover:underline" %>
+            <% end %>
+            <%= link_to "New wager", new_wager_path, class: "btn-royale inline-flex cursor-pointer items-center rounded-lg px-4 py-2.5 text-sm text-white" %>
+          </div>
         </div>
 
-        <div class="divide-y divide-supercell-gray">
+        <div class="space-y-3 p-4 bg-supercell-gray/20">
           <% @wagers.each do |w| %>
-            <div class="px-5 py-4 transition-colors hover:bg-supercell-light">
-              <div class="flex items-center justify-between gap-4">
-                <div class="min-w-0">
-                  <%= link_to wager_path(w), class: "block" do %>
+            <div class="card-royale-item overflow-hidden">
+              <%= link_to wager_path(w), class: "block px-5 py-4 transition-colors hover:bg-supercell-light" do %>
+                <div class="flex items-center justify-between gap-4">
+                  <div class="min-w-0">
                     <div class="font-mono text-sm font-semibold text-supercell-dark">
                       <%= w.tag_a %> vs <%= w.tag_b.presence || "?" %>
                     </div>
-                  <div class="mt-1 text-xs text-supercell-medium">created <%= time_ago_in_words(w.created_at) %> ago</div>
-                  <% end %>
-                </div>
+                    <div class="mt-1 text-xs text-supercell-medium">created <%= time_ago_in_words(w.created_at) %> ago</div>
+                  </div>
 
-                <div class="shrink-0 text-right">
-                  <div class="text-sm font-bold text-supercell-dark"><%= w.status_display %></div>
-                  <div class="text-xs font-semibold text-royale-gold"><%= w.amount_display %></div>
+                  <div class="shrink-0 text-right flex flex-col items-end gap-1">
+                    <div class="flex items-center gap-2">
+                      <div class="text-sm font-bold text-supercell-dark"><%= w.status_display %></div>
+                      <%= button_to wager_path(w), method: :delete, data: { turbo_confirm: "Delete this wager?" }, class: "text-supercell-medium hover:text-royale-defeat transition-colors" do %>
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+                          <path fill-rule="evenodd" d="M8.75 3A2.75 2.75 0 006 5.75v.562c-1.04.044-2.07.116-3.088.217a.75.75 0 10.148 1.493 48.021 48.021 0 013.34-.263l.228 11.11a2.25 2.25 0 002.247 2.203h4.25a2.25 2.25 0 002.247-2.203l.228-11.11a47.35 47.35 0 013.34.263.75.75 0 10.148-1.493 47.816 47.816 0 00-3.088-.217V5.75A2.75 2.75 0 0011.25 3h-2.5zm2.5 4v-.25a1.25 1.25 0 00-2.5 0V7h2.5zm-3.75 1.25a.75.75 0 01.75.75v6.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm3.75.75a.75.75 0 00-1.5 0v6.75a.75.75 0 001.5 0V9z" clip-rule="evenodd" />
+                        </svg>
+                      <% end %>
+                    </div>
+                    <div class="text-xs font-semibold text-royale-gold"><%= w.amount_display %></div>
+                  </div>
                 </div>
-              </div>
+              <% end %>
             </div>
           <% end %>
 
@@ -43,8 +55,10 @@
 
     <div class="lg:col-span-4 lg:col-start-9">
       <div class="card-royale rounded-xl p-5">
-        <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Wallet</div>
-        <div class="mt-4">
+        <div class="flex items-center justify-between border-b-2 border-supercell-gray pb-3 mb-4">
+          <div class="text-xs font-display font-bold uppercase tracking-widest text-supercell-medium">Wallet</div>
+        </div>
+        <div>
           <div
             data-privy-widget="1"
             data-variant="fund_only"

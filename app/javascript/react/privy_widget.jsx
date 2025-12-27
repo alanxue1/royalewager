@@ -333,7 +333,8 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
   }
 
   if (!ready) {
-    return <div className="text-sm text-gray-400">Loading…</div>
+    // Don't show loading during Turbo navigation - Privy re-initializes quickly
+    return null
   }
 
   if (!authenticated) {
@@ -389,27 +390,13 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     return (
       <button
         type="button"
-        className="fixed left-4 top-4 z-50 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100 sm:left-6 sm:top-6"
+        className="fixed left-4 top-4 z-50 inline-flex cursor-pointer items-center justify-center transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 active:scale-95 sm:left-6 sm:top-6"
+        style={{ width: '60px', height: '60px' }}
         onClick={onBack}
         aria-label="Back"
         title="Back"
       >
-        <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
-          <path
-            d="M10 19l-7-7 7-7"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M3 12h18"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <img src="/assets/exit.png" alt="Back" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
       </button>
     )
   }
@@ -425,12 +412,12 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
     const tickerDeltaSolFixed = showTicker ? ((tickerDeltaLamports || 0) / LAMPORTS_PER_SOL).toFixed(3) : ""
     const tickerIsUp = showTicker ? (tickerDeltaLamports || 0) > 0 : false
     const tickerAccent =
-      tickerKind === "win" || tickerIsUp ? "text-emerald-700" : "text-rose-700"
+      tickerKind === "win" || tickerIsUp ? "text-emerald-600" : "text-rose-600"
 
     return (
       <div className="w-full">
         <div className="text-center">
-          <div className="text-3xl font-extrabold tracking-tight text-slate-900" style={{ fontFamily: "'Clash', sans-serif" }}>
+          <div className={`text-3xl font-extrabold tracking-tight ${showTicker ? tickerAccent : "text-royale-gold"}`} style={{ fontFamily: "'Clash', sans-serif", color: showTicker ? undefined : '#FFD700' }}>
             {balanceBusy && !showTicker ? (
               "…"
             ) : showTicker ? (
@@ -439,13 +426,13 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
                 value={tickerEndSol}
                 startValue={tickerStartSol}
                 duration={2000}
-                className={`tabular-nums ${tickerAccent}`}
+                className="tabular-nums"
                 style={{ fontFamily: "'Clash', sans-serif" }}
               />
             ) : (
               balanceSolFixed || "—"
             )}{" "}
-            <span className="text-base font-semibold text-slate-600" style={{ fontFamily: "'Clash', sans-serif" }}>SOL</span>
+            <span className={`text-base font-semibold ${showTicker ? tickerAccent : ""}`} style={{ fontFamily: "'Clash', sans-serif", color: showTicker ? undefined : '#FFD700' }}>SOL</span>
           </div>
           {showTicker ? (
             <div className={`mt-1 text-xs font-semibold ${tickerAccent}`} style={{ fontFamily: "'Clash', sans-serif" }}>
@@ -455,25 +442,15 @@ export function PrivyWidget({ variant, solanaCluster, solanaRpcUrl }) {
           ) : null}
         </div>
 
-        <div className="mt-4 grid w-full grid-cols-2 gap-2">
+        <div className="mt-4 w-full">
           <button
             type="button"
             className="w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ fontFamily: "'Righteous', cursive" }}
+            style={{ fontFamily: "'Clash', sans-serif" }}
             onClick={copySolanaAddress}
             disabled={!hasSolanaWallet}
           >
             Copy
-          </button>
-
-          <button
-            type="button"
-            className="w-full cursor-pointer rounded-lg bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ fontFamily: "'Righteous', cursive" }}
-            onClick={() => onFund({ solanaCluster: solanaCluster || "devnet", solanaRpcUrl })}
-            disabled={!hasSolanaWallet || fundBusy}
-          >
-            {fundBusy ? "Funding…" : solanaCluster === "devnet" ? "Airdrop 1 SOL" : "Fund wallet"}
           </button>
         </div>
 
